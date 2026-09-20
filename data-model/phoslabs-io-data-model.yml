@@ -1,0 +1,56 @@
+generated: '2026-09-19'
+method: derived
+source: openapi/phoslabs-io-openapi.yml
+docs: https://phoslabs.io/api/v1/tools
+summary: >-
+  Derived from the two components.schemas in the OpenAPI (SuccessResponse, ErrorResponse) and the six inline
+  request schemas. Phos Labs has no persisted, caller-addressable resources: every entity is a request
+  describing a product, funnel, flow, draft or text, and a computed analysis returned once. The only durable
+  state the API exposes is the account's credit balance, surfaced as credits_remaining on every envelope.
+  There are no ids, no $ref links between entities and no relationships to draw; the "graph" is six inputs
+  fanning into one untyped result envelope.
+id_style:
+  format: none — no resource identifiers are returned or accepted
+  prefixes_published: false
+entities:
+- name: Account (implicit)
+  source: credits_remaining on SuccessResponse / ErrorResponse; POST /api/trial (get_key in GET /api/v1/tools)
+  fields: [api_key (bearer), credits_remaining]
+  note: Never returned as an object; only the balance is visible, after each call.
+- name: ToolListing
+  source: GET /api/v1/tools (listTools; response undocumented in the spec, observed live)
+  fields:
+  - 'tools{<key>: {endpoint, description, credits, price, currency, input{field: "type (required|optional)"}}}'
+  - auth
+  - get_key
+  - 'credit_unit {amount, currency}'
+  - buy_credits
+  - openapi
+  note: The machine-readable price list and input-field index; keys audit, diagnose, fix-checkout, copy, pricing, detect-biases.
+- name: AuditRequest
+  source: audit requestBody
+  fields: [product_description (required), url, industry, goal]
+- name: DiagnoseRequest
+  source: diagnose requestBody
+  fields: [funnel_description (required), data (object), industry]
+- name: FixCheckoutRequest
+  source: fixCheckout requestBody
+  fields: [checkout_flow (required)]
+- name: CopyRequest
+  source: copy requestBody
+  fields: [draft (required), goal (required)]
+- name: PricingRequest
+  source: pricing requestBody
+  fields: [product (required), context, persona]
+- name: DetectBiasesRequest
+  source: detectBiases requestBody
+  fields: [text (required)]
+- name: SuccessResponse
+  source: '#/components/schemas/SuccessResponse'
+  fields: [success (boolean), result (object — "Tool-specific result", untyped), credits_remaining (integer, nullable)]
+  note: The result object's shape is not published for any tool.
+- name: ErrorResponse
+  source: '#/components/schemas/ErrorResponse'
+  fields: [error (string), credits_remaining (integer, nullable)]
+relationships: []
+render: null

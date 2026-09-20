@@ -1,0 +1,62 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Phos Labs Behavioral Science API OpenAPI
+  version: 1.0.0
+extends: ../openapi/phoslabs-io-openapi.yml
+x-generated: '2026-09-19'
+x-method: derived
+x-source: >-
+  Derived from openapi/phoslabs-io-openapi.yml (verbatim from https://phoslabs.io/api/v1/openapi.json) plus
+  the live GET /api/v1/tools listing and the searched artifacts in this repo. Captures API Evangelist
+  annotations without mutating the provider's contract.
+actions:
+- target: $.info
+  description: Record the provider, the working documentation (the spec's contact URL is the marketing root), the agent surfaces and the billing model.
+  update:
+    x-provider: Phos Labs
+    x-documentation: https://github.com/phoslabs/behavioral-science-api
+    x-tool-listing: https://phoslabs.io/api/v1/tools
+    x-mcp-server: https://mcp.phoslabs.io/mcp
+    x-agent-card: https://mcp.phoslabs.io/.well-known/agent-card.json
+    x-pricing: https://phoslabs.io/credits
+    x-billing: 'Prepaid credits, 1 credit = EUR 0.01, debited per call; HTTP 402 at zero balance'
+    x-idempotency: none
+    x-reversibility: none
+    x-contract-lag:
+      note: The provider README lists REST tools that are not in this contract and not served by the live tool listing.
+      readme_only: [/nudge, /urgency, /churn, /onboarding, /reactivate, /norms, /survey, /experiment, /social-proof]
+- target: $.servers[0]
+  description: The spec's server is the host root; every path in the document already carries the /api/v1 prefix, so the effective base is https://phoslabs.io/api/v1.
+  update:
+    x-effective-base: https://phoslabs.io/api/v1
+- target: $.components.securitySchemes.BearerAuth
+  description: Key issuance and observed error bodies.
+  update:
+    x-key-issuance: 'POST https://phoslabs.io/api/trial {"email","name"} or purchase at /credits'
+    x-observed-401: ['Missing Authorization header. Use: Authorization: Bearer <api_key>', 'Invalid or inactive API key']
+- target: $.paths['/api/v1/audit'].post
+  update: {x-credits: 0, x-price-eur: 0.0, x-agent-card-skill: null, tags: [Analysis]}
+- target: $.paths['/api/v1/diagnose'].post
+  update: {x-credits: 10, x-price-eur: 0.1, x-agent-card-skill: diagnose-dropoff, tags: [Analysis]}
+- target: $.paths['/api/v1/fix-checkout'].post
+  update: {x-credits: 30, x-price-eur: 0.3, x-agent-card-skill: fix-checkout, tags: [Redesign]}
+- target: $.paths['/api/v1/copy'].post
+  update: {x-credits: 20, x-price-eur: 0.2, x-agent-card-skill: write-product-copy, tags: [Copy]}
+- target: $.paths['/api/v1/pricing'].post
+  update: {x-credits: 25, x-price-eur: 0.25, x-agent-card-skill: optimize-pricing, tags: [Pricing]}
+- target: $.paths['/api/v1/detect-biases'].post
+  update: {x-credits: 8, x-price-eur: 0.08, x-agent-card-skill: null, tags: [Analysis]}
+- target: $.paths['/api/v1/tools'].get
+  update:
+    tags: [Discovery]
+    x-anonymous: true
+    x-response-shape: '{tools{key: {endpoint, description, credits, price, currency, input}}, auth, get_key, credit_unit, buy_credits, openapi}'
+- target: $
+  description: Declare the tags the overlay assigns.
+  update:
+    tags:
+    - {name: Analysis, description: Behavioral analyses that return a result object}
+    - {name: Redesign, description: Flow redesigns}
+    - {name: Copy, description: Copywriting}
+    - {name: Pricing, description: Pricing strategy}
+    - {name: Discovery, description: Anonymous tool and price discovery}

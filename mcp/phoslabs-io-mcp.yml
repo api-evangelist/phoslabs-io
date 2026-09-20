@@ -1,0 +1,152 @@
+generated: '2026-09-19'
+method: probed
+status: published
+source: https://mcp.phoslabs.io/mcp
+docs: https://github.com/phoslabs/behavioral-science-api#mcp-integration
+summary: >-
+  Phos Labs ships a hosted, remote MCP server on mcp.phoslabs.io and lists it twice in the official MCP
+  registry: io.phoslabs/commerce-intelligence (4.0.0, streamable-http, remote url https://mcp.phoslabs.io/,
+  published 2026-03-08) and io.phoslabs/behavioral-science (1.0.0, sse, remote url https://mcp.phoslabs.io/sse,
+  published 2026-03-29). Three paths answer on the host and they are gated differently: POST /mcp is the
+  full Streamable HTTP endpoint behind OAuth 2.1 (401 invalid_token with an RFC 9728 resource_metadata
+  challenge; RFC 8414 metadata advertises PKCE, refresh tokens and dynamic client registration); POST / answers
+  an anonymous MCP initialize (protocolVersion 2025-03-26, capabilities.tools, serverInfo "Phos Labs Commerce
+  Intelligence" 1.0.0) and then rejects every other method — tools/list, ping, prompts/list, resources/list,
+  tools/call, notifications/initialized — with 401 {"error":"use /mcp for full MCP access"}; GET/POST /sse and
+  /messages want an API-key bearer ("API key required. Pass Authorization: Bearer <key> header."). tools/list
+  could therefore not be introspected anonymously, so no inputSchema is recorded here: the tool inventory below
+  is what the provider publishes elsewhere (the nine A2A card skills, the REST /api/v1/tools listing and the
+  provider's own README), named as such. Billing is per tool call in credits (1 credit = EUR 0.01; agents start
+  with free credits; packs at https://phoslabs.io/credits), and the provider states x402 USDC micropayments on
+  Base L2 as an alternative rail.
+deployment:
+  mode: remote
+  endpoint: https://mcp.phoslabs.io/mcp
+  install: null
+  package: null
+  auth: oauth
+  verified: probed
+  note: >-
+    Probed 2026-09-19. POST /mcp (initialize, tools/list) -> 401 with
+    WWW-Authenticate: Bearer error="invalid_token", error_description="Authentication required",
+    resource_metadata="https://mcp.phoslabs.io/.well-known/oauth-protected-resource/mcp". The metadata resolves
+    (200) and names authorization server https://mcp.phoslabs.io/ whose RFC 8414 document (200) declares
+    authorization_code + refresh_token grants, PKCE S256, token_endpoint_auth_methods including none (public
+    clients), registration_endpoint /register and a single scope "claudeai". A conforming MCP client can
+    therefore self-register and complete the flow without a pre-shared secret; a human still has to approve
+    the authorization step and hold an account with credits. Alternative transports on the same host: /sse
+    and /messages (legacy HTTP+SSE) accept an API key as a Bearer token instead of OAuth; the root path is a
+    handshake-only surface. No stdio package exists on npm or PyPI (searched 2026-09-19), and the GitHub org
+    phoslabs publishes documentation only.
+  alternate_endpoints:
+  - {url: 'https://mcp.phoslabs.io/', transport: streamable-http, auth: 'none for initialize; 401 "use /mcp for full MCP access" for every other method', registry: io.phoslabs/commerce-intelligence, probe: 'initialize 200; tools/list 401'}
+  - {url: 'https://mcp.phoslabs.io/sse', transport: sse, auth: api-key bearer, registry: io.phoslabs/behavioral-science, probe: 'GET/POST 401 {"error":"unauthorized","message":"API key required. Pass Authorization: Bearer <key> header."}'}
+  - {url: 'https://mcp.phoslabs.io/messages', transport: sse-messages, auth: api-key bearer, probe: 'POST 401 same body as /sse'}
+server:
+  name: Phos Labs Commerce Intelligence
+  server_declared_version: 1.0.0
+  registry_version: 4.0.0
+  transport: streamable-http
+  url: https://mcp.phoslabs.io/mcp
+  protocol_version_observed: '2025-03-26'
+  capabilities_observed:
+    tools: true
+    resources: unknown
+    prompts: unknown
+  health: 'GET https://mcp.phoslabs.io/health -> 200 {"status":"ok","name":"Phos Labs Commerce Intelligence"}'
+  cors: 'access-control-allow-origin: * on the anonymous initialize response'
+  mcp_registry:
+  - name: io.phoslabs/commerce-intelligence
+    title: Phos Labs Commerce Intelligence
+    version: 4.0.0
+    remotes: [{type: streamable-http, url: 'https://mcp.phoslabs.io/'}]
+    published: '2026-03-08'
+    status: active
+    source: https://registry.modelcontextprotocol.io/v0/servers?search=phoslabs
+  - name: io.phoslabs/behavioral-science
+    title: Phos Labs Behavioral Science
+    version: 1.0.0
+    description: Behavioral science tools for commerce — personas, nudges, preferences, friction audits.
+    remotes: [{type: sse, url: 'https://mcp.phoslabs.io/sse'}]
+    published: '2026-03-29'
+    status: active
+  third_party_listings:
+  - https://glama.ai/mcp/connectors/io.phoslabs/commerce-intelligence
+  - https://www.pulsemcp.com/servers/commerce-intelligence
+  - https://www.pulsemcp.com/servers/phoslabs-behavioral-science
+oauth:
+  authorization_server: https://mcp.phoslabs.io/
+  metadata: well-known/phoslabs-io-oauth-authorization-server.json
+  protected_resource_metadata: well-known/phoslabs-io-oauth-protected-resource-mcp.json
+  grants: [authorization_code, refresh_token]
+  pkce: [S256]
+  dynamic_client_registration: https://mcp.phoslabs.io/register
+  revocation: https://mcp.phoslabs.io/revoke
+  scopes: [claudeai]
+  scopes_artifact: scopes/phoslabs-io-scopes.yml
+client_config:
+  claude_code: claude mcp add --transport http phoslabs https://mcp.phoslabs.io/mcp
+  generic_json: '{"mcpServers":{"behavioral-science":{"url":"https://mcp.phoslabs.io/mcp"}}}'
+  source: https://github.com/phoslabs/behavioral-science-api#mcp-integration (the JSON block is the provider's own example)
+billing:
+  unit: {credits: 1, amount: 0.01, currency: EUR}
+  per_call: 'Tool calls cost up to 40 credits, and some cost nothing (https://phoslabs.io/credits); REST prices per tool are in plans/phoslabs-io-api-v1-tools.json'
+  free_credits: '20 on connect (credits page) / 100 for new accounts (README) — the provider states both figures'
+  packs: plans/phoslabs-io-plans-pricing.yml
+  x402: 'Stated (terms, agent card, README: phoslabs.io/x402/*) but every /x402/* path returned 403 on 2026-09-19; no 402 challenge was observed, so it is recorded as a claim, not a verified rail.'
+tools_introspection:
+  method: tools/list
+  status: gated
+  note: >-
+    Not introspected: /mcp requires an OAuth token, /sse an API key, and / refuses tools/list. The list below
+    is assembled from provider-published sources and carries NO inputSchema; schemas require authenticated
+    introspection. Names are the provider's identifiers where one exists (REST tool keys from
+    GET /api/v1/tools; A2A skill ids from the agent card) and are not claimed to be the MCP tool names.
+tools:
+- name: audit
+  description: Full behavioral audit of a product or service
+  source: 'GET https://phoslabs.io/api/v1/tools (REST key audit; 0 credits)'
+  source_operation: openapi/phoslabs-io-openapi.yml#audit
+- name: diagnose
+  description: Diagnose funnel dropoff with behavioral science
+  source: 'GET /api/v1/tools (10 credits); agent card skill diagnose-dropoff'
+  source_operation: openapi/phoslabs-io-openapi.yml#diagnose
+- name: fix-checkout
+  description: Redesign a checkout flow using behavioral science
+  source: 'GET /api/v1/tools (30 credits); agent card skill fix-checkout'
+  source_operation: openapi/phoslabs-io-openapi.yml#fixCheckout
+- name: copy
+  description: Rewrite copy using behavioral science principles
+  source: 'GET /api/v1/tools (20 credits); agent card skill write-product-copy'
+  source_operation: openapi/phoslabs-io-openapi.yml#copy
+- name: pricing
+  description: Optimize pricing strategy with behavioral science
+  source: 'GET /api/v1/tools (25 credits); agent card skill optimize-pricing'
+  source_operation: openapi/phoslabs-io-openapi.yml#pricing
+- name: detect-biases
+  description: Detect cognitive biases in text
+  source: 'GET /api/v1/tools (8 credits)'
+  source_operation: openapi/phoslabs-io-openapi.yml#detectBiases
+- name: predict-churn
+  description: Identify which customers are about to leave and why. Returns churn risk scores with behavioral drivers and retention interventions.
+  source: 'agent card skill predict-churn; README lists /churn (15 credits) — not in the OpenAPI or the live /api/v1/tools listing'
+- name: personalize-approach
+  description: Segment customers by decision-making style and recommend tailored approaches for each segment.
+  source: agent card skill personalize-approach
+- name: add-social-proof
+  description: Design social proof elements — what others bought, reviews, peer behavior signals.
+  source: 'agent card skill add-social-proof; README lists /social-proof (10 credits) — not in the OpenAPI'
+- name: run-experiment
+  description: Design a rigorous A/B test with sample size calculations, metrics, treatment arms, and statistical power analysis.
+  source: 'agent card skill run-experiment; README lists /experiment (15 credits) — not in the OpenAPI'
+- name: ethics-check
+  description: Audit a design, intervention, or recommendation for dark patterns, manipulation, and autonomy violations.
+  source: agent card skill ethics-check
+readme_only_tools:
+  note: >-
+    The provider README (2026-04-04) tabulates 15 REST tools; the live GET /api/v1/tools answers 6 and the
+    OpenAPI has 7 operations. These nine README entries have no live REST listing and no card skill:
+    nudge, urgency, onboarding, reactivate, norms, survey, plus churn / social-proof / experiment which do
+    appear as card skills. Third-party listings quote "23 tools across 3 product lines (CONVERT, RETAIN,
+    UNDERSTAND)" and "35+ tools"; neither figure could be verified without a token.
+  tools: [nudge, biases, urgency, churn, onboarding, reactivate, norms, survey, experiment, social-proof]

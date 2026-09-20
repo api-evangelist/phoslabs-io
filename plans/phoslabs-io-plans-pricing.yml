@@ -1,0 +1,71 @@
+generated: '2026-09-19'
+method: searched
+source: https://phoslabs.io/credits
+docs: https://phoslabs.io/terms
+machine_readable: plans/phoslabs-io-api-v1-tools.json
+plan_count: 3
+currency: EUR
+model: Prepaid credit packs (1 credit = EUR 0.01) debited per tool call; free starter credits; x402 USDC per-call micropayments stated but not verifiable
+plans:
+- id: free-credits
+  name: Free starter credits
+  price: 0
+  currency: EUR
+  period: null
+  included: ['20 free credits on connecting the MCP (credits page)', '100 free credits for a new account (README)', 'audit tool at 0 credits, unlimited by price']
+  quotes: ['Your agent gets 20 free credits to start', 'New accounts get 100 free credits to try any tool.']
+  note: The provider states two different starter figures on two of its own surfaces; both are recorded.
+- id: starter
+  name: Starter
+  price: 5
+  currency: EUR
+  period: per pack (one-time)
+  included_credits: 500
+  per_credit: 0.01
+  checkout: https://buy.stripe.com/aFaeVe7wW1El2DS43bdIA00
+  quote: 'Starter €5 /pack 500 credits €0.01 per credit'
+- id: standard
+  name: Standard
+  price: 20
+  currency: EUR
+  period: per pack (one-time)
+  included_credits: 2000
+  per_credit: 0.01
+  badge: MOST POPULAR
+  checkout: https://buy.stripe.com/bJe3cw2cCaaR6U8czHdIA01
+  quote: 'Standard €20 /pack 2,000 credits €0.01 per credit'
+- id: pro
+  name: Pro
+  price: 100
+  currency: EUR
+  period: per pack (one-time)
+  included_credits: 10000
+  per_credit: 0.01
+  checkout: https://buy.stripe.com/3cI6oI04ubeV92geHPdIA02
+  quote: 'Pro €100 /pack 10,000 credits €0.01 per credit'
+per_call_prices:
+  source: GET https://phoslabs.io/api/v1/tools (anonymous, 2026-09-19)
+  currency: EUR
+  tools:
+  - {tool: audit, endpoint: POST /api/v1/audit, credits: 0, price: 0.0}
+  - {tool: diagnose, endpoint: POST /api/v1/diagnose, credits: 10, price: 0.1}
+  - {tool: fix-checkout, endpoint: POST /api/v1/fix-checkout, credits: 30, price: 0.3}
+  - {tool: copy, endpoint: POST /api/v1/copy, credits: 20, price: 0.2}
+  - {tool: pricing, endpoint: POST /api/v1/pricing, credits: 25, price: 0.25}
+  - {tool: detect-biases, endpoint: POST /api/v1/detect-biases, credits: 8, price: 0.08}
+  mcp: 'Credits page: "Tool calls cost up to 40 credits, and some cost nothing." Per-tool MCP prices are not published anonymously.'
+  readme_discrepancy: 'The README (2026-04-04) prices audit at 80, pricing at 15, copy at 12 and lists nine further tools (8-15 credits each) that the live listing does not serve; the live JSON is treated as current.'
+x402:
+  stated: 'Terms §3: "x402 USDC micropayments on Base L2 are accepted for individual API calls." README: x402 Micropayments at phoslabs.io/x402/*.'
+  verified: false
+  probe: 'GET and POST /x402/diagnose and /x402/audit -> 403 {"error": "Unauthorized"} on 2026-09-19; no 402 challenge; not in the CDP x402 discovery index.'
+  per_call_price: unpublished
+overage: not applicable (prepaid; calls fail with HTTP 402 Insufficient credits at zero balance)
+refunds: 'Terms §3: "Nothing refunds credits automatically. Mail support@phoslabs.io and a person reads it and replies."'
+payment_processor: Stripe (EUR); Stripe Payment Links, all three 200 on 2026-09-19
+higher_limits:
+  route: none published
+  self_serve: false
+notes:
+- The credits page is the only price list; the README's USD prices ($5/$20/$100) are the same numbers in a different currency and are superseded by the EUR page and the EUR-denominated live listing.
+- No subscription, no enterprise tier, no quota table beyond credits.

@@ -1,0 +1,23 @@
+generated: '2026-09-19'
+method: searched
+source: https://github.com/phoslabs
+docs: https://github.com/phoslabs/behavioral-science-api
+note: >-
+  Phos Labs publishes no client library, SDK, CLI or stdio MCP package on any registry searched. The GitHub
+  org (github.com/phoslabs, created 2026-04-04, 3 public repos) holds a documentation-only repo
+  (behavioral-science-api: README, MIT, size 2 KB, one push) and two forks of APIs.guru's openapi-directory.
+  The provider's distribution is entirely hosted — a REST API called with curl and a remote MCP server — and
+  the README's integration examples are curl and an MCP client JSON block, not an install command. No SDKs
+  pointer is emitted. Every registry below was queried on 2026-09-19 with the metadata endpoints named.
+packages: []
+registries_checked:
+- {registry: npm, query: 'registry.npmjs.org/-/v1/search?text=phoslabs', result: '0 objects'}
+- {registry: npm, query: '"phos labs"', result: 'no relevant match (16,741 noise hits on the two words)'}
+- {registry: pypi, query: phoslabs, result: 404}
+- {registry: pypi, query: phos-labs, result: 404}
+- {registry: pypi, query: phoslabs-mcp, result: 404}
+- {registry: crates.io, query: phoslabs, result: '0 crates'}
+- {registry: github, query: 'org phoslabs', result: '200 — 3 repos, none a library (behavioral-science-api README-only; two openapi-directory forks)'}
+- {registry: github, query: 'search/repositories?q=phoslabs', result: '1 unrelated hit (Doha-Elgarouaz/PhosLab, a LIMS for OCP)'}
+- {registry: mcp-registry, query: 'registry.modelcontextprotocol.io/v0/servers?search=phoslabs', result: '2 remote-only entries (no packages[]); recorded in mcp/phoslabs-io-mcp.yml'}
+- {registry: maven-central / nuget / pkg.go.dev / rubygems / packagist, query: phoslabs, result: 'not queried individually — no first-party source names a library in any of these ecosystems, and the provider ships no SDK of any kind'}

@@ -1,0 +1,31 @@
+generated: '2026-09-19'
+method: searched
+source: https://mcp.phoslabs.io/.well-known/oauth-authorization-server
+docs: https://mcp.phoslabs.io/.well-known/oauth-protected-resource/mcp
+note: >-
+  The OpenAPI declares no oauth2 scheme (derive-oauth-scopes.py found nothing), but the MCP server documents
+  OAuth 2.1 through its RFC 8414 / RFC 9728 discovery documents, which are the provider's only published
+  scope reference. One scope is declared and no human description of it is published anywhere; the name
+  suggests it exists to satisfy the Claude connector flow. No scopes reference page exists (/docs is 403).
+schemes:
+- name: mcp-oauth
+  type: oauth2
+  source: well-known/phoslabs-io-oauth-authorization-server.json
+  issuer: https://mcp.phoslabs.io/
+  resource: https://mcp.phoslabs.io/mcp
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://mcp.phoslabs.io/authorize
+    tokenUrl: https://mcp.phoslabs.io/token
+    refreshUrl: https://mcp.phoslabs.io/token
+    pkce: [S256]
+  registration_endpoint: https://mcp.phoslabs.io/register
+  revocation_endpoint: https://mcp.phoslabs.io/revoke
+  token_endpoint_auth_methods: [client_secret_post, client_secret_basic, none]
+  bearer_methods: [header]
+scopes:
+- scope: claudeai
+  description: null
+  flows: [authorizationCode]
+  sources: [well-known/phoslabs-io-oauth-authorization-server.json, well-known/phoslabs-io-oauth-protected-resource.json]
+  note: Declared in scopes_supported of both discovery documents; no published description.

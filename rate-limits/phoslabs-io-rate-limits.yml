@@ -1,0 +1,27 @@
+generated: '2026-09-19'
+method: searched
+source: https://phoslabs.io/terms
+docs: null
+limit_count: 0
+summary: >-
+  Rate limits exist but are unpublished. Terms §5: "Rate limits apply to all endpoints. Current limits are
+  documented in our API reference. We may adjust limits at any time to maintain service quality." The API
+  reference the sentence points at (https://phoslabs.io/docs) returns 403, the README carries no limits
+  section, and the anonymous GET /api/v1/tools listing has no limit fields. The privacy policy confirms IP
+  addresses are held "for rate limiting and abuse prevention" and "not stored beyond the rate-limiting
+  window" without naming the window. No numeric limit, no window, no burst and no exhaustion status is
+  published anywhere reachable; the effective throttle is the credit balance (HTTP 402 at zero).
+rate_limits: []
+headers:
+  documented: []
+  observed_on_live_401: [access-control-allow-headers, access-control-allow-methods, access-control-allow-origin, content-type, content-length, server, cf-cache-status, date]
+  note: No RateLimit-*, X-RateLimit-* or Retry-After header on any observed response (REST 401s, MCP 401s, the anonymous initialize 200, GET /api/v1/tools 200).
+exhaustion:
+  status: undocumented
+  note: No 429 behaviour is documented; the OpenAPI declares only 200/401/402 per operation.
+billing_as_throttle:
+  note: 'Each call debits credits (0-30 per REST tool; "up to 40" per MCP tool call); at zero balance the API answers HTTP 402 Insufficient credits. See plans/phoslabs-io-plans-pricing.yml.'
+evidence:
+- {url: https://phoslabs.io/terms, status: 200, quote: 'Rate limits apply to all endpoints. Current limits are documented in our API reference.'}
+- {url: https://phoslabs.io/docs, status: 403, note: the API reference the terms cite}
+- {url: https://phoslabs.io/privacy, status: 200, quote: 'IP addresses: not stored beyond the rate-limiting window'}

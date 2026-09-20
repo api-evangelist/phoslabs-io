@@ -1,0 +1,152 @@
+generated: '2026-09-19'
+method: probed
+source: >-
+  Live GET probes of the named /.well-known/* path list on mcp.phoslabs.io (the MCP server host and RFC 9728
+  resource server), phoslabs.io (registrable domain, website, REST API host and OpenAPI servers[] host) and
+  www.phoslabs.io on 2026-09-19. Every row is a request that was issued; every status is the one returned.
+summary:
+  hosts_probed: 3
+  paths_probed: 36
+  documents_served: 5
+  hit_count: 5
+  path_echo_control: passed
+  note: >-
+    mcp.phoslabs.io serves five real well-known documents: RFC 8414 OAuth authorization-server metadata
+    (issuer https://mcp.phoslabs.io/, authorization_code + refresh_token, PKCE S256, dynamic client
+    registration at /register, revocation at /revoke, one scope "claudeai"), RFC 9728 protected-resource
+    metadata at both the bare path and the /mcp-suffixed path the WWW-Authenticate challenge names (resource
+    https://mcp.phoslabs.io/mcp), and an A2A agent card at the canonical agent-card.json AND the legacy
+    agent.json (identical bodies; graded flavored in a2a/). No security.txt, no OIDC discovery, no RFC 9727
+    API catalog, no ai-plugin.json, no APIs.json, no UCP/ACP/AAuth document on any host. Unknown paths on
+    mcp.phoslabs.io return a plain-text 404 ("Not Found", 9 bytes) and the negative-control path 404'd, so the
+    five hits are real documents, not a catch-all. phoslabs.io answers 403 {"error": "Unauthorized"} (25
+    bytes, application/json) for every path it does not route — including the negative control — so it
+    serves nothing under /.well-known/ and is not a soft-200 catch-all either. www.phoslabs.io resolves to the
+    same Cloudflare addresses but the TLS handshake fails (curl exit 000); nothing is served there.
+hosts:
+- host: mcp.phoslabs.io
+  role: MCP server host; RFC 9728 resource server and RFC 8414 authorization server (issuer https://mcp.phoslabs.io/); A2A agent card host
+  soft_404_control:
+    path: /.well-known/phoslabs-io-negative-control-4e9b21c7.json
+    status: 404
+    bytes: 9
+    note: Genuine plain-text 404 on a path that cannot exist; the host is not a catch-all and does not echo the requested path.
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: application/json
+    bytes: 625
+    file: phoslabs-io-oauth-authorization-server.json
+    standard: RFC 8414 OAuth 2.0 Authorization Server Metadata
+    note: >-
+      issuer https://mcp.phoslabs.io/; authorization_endpoint /authorize; token_endpoint /token;
+      registration_endpoint /register (RFC 7591 dynamic client registration); revocation_endpoint /revoke (RFC
+      7009); grant_types authorization_code + refresh_token; response_types code; code_challenge_methods S256
+      (RFC 7636); token_endpoint_auth_methods client_secret_post, client_secret_basic, none; scopes_supported
+      ["claudeai"]. GET /authorize returns 400 and /token, /register, /revoke return 405 to GET — all four
+      endpoints exist. No registration was performed.
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    content_type: application/json
+    bytes: 165
+    file: phoslabs-io-oauth-protected-resource.json
+    standard: RFC 9728 OAuth 2.0 Protected Resource Metadata
+    note: >-
+      resource https://mcp.phoslabs.io/mcp; authorization_servers [https://mcp.phoslabs.io/];
+      scopes_supported [claudeai]; bearer_methods_supported [header]. Consistent with the WWW-Authenticate
+      challenge on POST /mcp, which names resource_metadata
+      https://mcp.phoslabs.io/.well-known/oauth-protected-resource/mcp (row below).
+  - path: /.well-known/oauth-protected-resource/mcp
+    status: 200
+    content_type: application/json
+    bytes: 165
+    file: phoslabs-io-oauth-protected-resource-mcp.json
+    standard: RFC 9728 (path-suffixed form for resource path /mcp)
+    note: Not on the named list; probed because the 401 challenge on /mcp names this exact URL. Body identical to the bare path.
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/api-catalog.json
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/ucp.json
+    status: 404
+  - path: /.well-known/acp.json
+    status: 404
+  - path: /.well-known/aauth-resource.json
+    status: 404
+  - path: /.well-known/apis.json
+    status: 404
+  - path: /apis.json
+    status: 404
+  - path: /apis.yml
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 200
+    content_type: application/json
+    bytes: 5215
+    file: phoslabs-io-agent-card.json
+    standard: A2A Agent Card (canonical path; no protocolVersion — graded flavored)
+    note: Captured verbatim and graded in a2a/phoslabs-io-a2a.yml.
+  - path: /.well-known/agent.json
+    status: 200
+    content_type: application/json
+    bytes: 5215
+    file: phoslabs-io-agent.json
+    standard: A2A Agent Card (legacy pre-0.3 path; byte-identical to agent-card.json)
+  - path: /.well-known/mcp.json
+    status: 404
+- host: phoslabs.io
+  role: Website, registrable domain, REST API host (https://phoslabs.io/api/v1) and OpenAPI servers[] host
+  soft_404_control:
+    path: /.well-known/phoslabs-io-negative-control-4e9b21c7.json
+    status: 403
+    bytes: 25
+    note: >-
+      403 {"error": "Unauthorized"} — the host's uniform answer for unrouted paths (also /docs, /api, /status,
+      /robots.txt, /llms.txt). A non-2xx, so nothing here is promoted to a hit; recorded so the 403s below read
+      as "not served" rather than "forbidden document".
+  documents:
+  - path: /.well-known/security.txt
+    status: 403
+  - path: /.well-known/openid-configuration
+    status: 403
+  - path: /.well-known/oauth-authorization-server
+    status: 403
+  - path: /.well-known/oauth-protected-resource
+    status: 403
+  - path: /.well-known/api-catalog
+    status: 403
+  - path: /.well-known/api-catalog.json
+    status: 403
+  - path: /.well-known/ai-plugin.json
+    status: 403
+  - path: /.well-known/ucp.json
+    status: 403
+  - path: /.well-known/acp.json
+    status: 403
+  - path: /.well-known/aauth-resource.json
+    status: 403
+  - path: /.well-known/apis.json
+    status: 403
+  - path: /apis.json
+    status: 403
+  - path: /apis.yml
+    status: 403
+  - path: /.well-known/agent-card.json
+    status: 403
+  - path: /.well-known/agent.json
+    status: 403
+  - path: /.well-known/mcp.json
+    status: 403
+- host: www.phoslabs.io
+  role: www alias
+  documents: []
+  note: >-
+    Resolves in DNS to the same Cloudflare anycast addresses as the apex (172.67.217.189, 104.21.16.250) but
+    the TLS handshake fails and curl exits 000 on every path; the www host serves no content and no redirect.
+    Nothing to probe.

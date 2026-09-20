@@ -1,18 +1,124 @@
 aid: phoslabs-io
 name: Phos Labs
-description: 'Phos Labs is a company surfaced via the API Evangelist harvest backlog (source: a2a-registry)
-  and added to the network as a stub for full-pipeline profiling.'
+description: >-
+  Phos Labs is an independent studio that sells behavioral-science "commerce intelligence" to AI agents:
+  diagnose where a funnel loses customers, redesign a checkout, rewrite offer copy, optimize price framing
+  and detect cognitive biases. The surface is a Bearer-key REST API at phoslabs.io/api/v1 (OpenAPI 3.0.3, 7
+  operations, an anonymous tool-and-price listing) and a hosted MCP server at mcp.phoslabs.io behind OAuth 2.1
+  with RFC 8414 / RFC 9728 discovery and dynamic client registration, listed twice in the official MCP
+  registry and described by an A2A-shaped agent card with nine skills. Billing is prepaid credits (1 credit =
+  EUR 0.01) debited per call, with x402 USDC micropayments stated but not verifiable. The same domain also
+  hosts Mind of Granite, a consumer decision-guidance product.
 url: https://raw.githubusercontent.com/api-evangelist/phoslabs-io/refs/heads/main/apis.yml
+image: https://phoslabs.io/favicon.ico
 x-type: company
 x-source: harvest:a2a-registry
-x-tier: stub
-x-tier-reason: harvest
+x-tier: profiled
+x-tier-reason: enrichment-pipeline
 specificationVersion: '0.20'
 created: '2026-09-19'
 modified: '2026-09-19'
 tags:
 - Company
-apis: []
+- Behavioral Science
+- Conversion Optimization
+- E-commerce
+- Pricing
+- Copywriting
+- AI Agents
+- MCP
+- A2A
+- Decision Intelligence
+- Agentic Commerce
+apis:
+- aid: phoslabs-io:behavioral-science-api
+  name: Behavioral Science API
+  description: >-
+    Bearer-key JSON REST API on phoslabs.io. The provider-published OpenAPI 3.0.3 (verbatim in openapi/)
+    declares seven operations — six metered POST tools (audit 0 credits, diagnose 10, fixCheckout 30, copy 20,
+    pricing 25, detectBiases 8; 1 credit = EUR 0.01) and an anonymous GET /api/v1/tools (listTools) that
+    returns the live inventory with prices and input fields. Keys are issued by POST /api/trial or by buying
+    credits. Every response carries credits_remaining; errors are {"error": string}; no Idempotency-Key, no
+    reversal path, rate limits unpublished. The provider README lists nine further tools the contract does
+    not serve.
+  humanURL: https://github.com/phoslabs/behavioral-science-api
+  baseURL: https://phoslabs.io/api/v1
+  tags:
+  - Behavioral Science
+  - Conversion Optimization
+  - Pricing
+  - Copywriting
+  properties:
+  - type: OpenAPI
+    url: openapi/phoslabs-io-openapi.yml
+  - type: OpenAPI
+    name: OpenAPI (provider-hosted)
+    url: https://phoslabs.io/api/v1/openapi.json
+  - type: Documentation
+    url: https://github.com/phoslabs/behavioral-science-api
+  - type: APIReference
+    url: https://phoslabs.io/api/v1/tools
+  - type: GettingStarted
+    url: https://github.com/phoslabs/behavioral-science-api#quick-start
+  - type: Authentication
+    url: authentication/phoslabs-io-authentication.yml
+  - type: Conventions
+    url: conventions/phoslabs-io-conventions.yml
+  - type: ErrorCatalog
+    url: errors/phoslabs-io-problem-types.yml
+  - type: DataModel
+    url: data-model/phoslabs-io-data-model.yml
+  - type: Overlay
+    url: overlays/phoslabs-io-openapi-overlay.yaml
+  - type: RateLimits
+    url: rate-limits/phoslabs-io-rate-limits.yml
+  - type: Plans
+    url: plans/phoslabs-io-plans-pricing.yml
+  - type: Lifecycle
+    url: lifecycle/phoslabs-io-lifecycle.yml
+  - type: AgentSkill
+    url: skills/phoslabs-io-diagnose-and-fix-a-funnel.md
+  - type: AgentSkill
+    url: skills/phoslabs-io-price-and-write-an-offer.md
+  - type: AgenticAccess
+    url: agentic-access/phoslabs-io-agentic-access.yml
+- aid: phoslabs-io:phos-labs-mcp-server
+  name: Phos Labs MCP Server
+  description: >-
+    Hosted, remote Model Context Protocol server. POST https://mcp.phoslabs.io/mcp is Streamable HTTP behind
+    OAuth 2.1: the 401 challenge names RFC 9728 protected-resource metadata, whose authorization server
+    (https://mcp.phoslabs.io/) publishes RFC 8414 metadata with authorization_code + refresh_token, PKCE S256,
+    dynamic client registration and one scope, claudeai. The root path answers an anonymous initialize
+    (protocolVersion 2025-03-26, serverInfo "Phos Labs Commerce Intelligence") and refuses every other method;
+    /sse and /messages accept a REST API key as the Bearer token. Registered in the official MCP registry as
+    io.phoslabs/commerce-intelligence (4.0.0) and io.phoslabs/behavioral-science (1.0.0). tools/list is gated,
+    so the tool inventory is recorded from the agent card and REST listing without input schemas. The A2A
+    agent card served on this host at /.well-known/agent-card.json (and agent.json) describes this server and
+    grades flavored (no protocolVersion).
+  humanURL: https://github.com/phoslabs/behavioral-science-api#mcp-integration
+  baseURL: https://mcp.phoslabs.io/mcp
+  tags:
+  - MCP
+  - AI Agents
+  - A2A
+  properties:
+  - type: MCPServer
+    url: mcp/phoslabs-io-mcp.yml
+  - type: ToolCrosswalk
+    url: mcp/phoslabs-io-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/phoslabs-io-a2a.yml
+  - type: AgentCard
+    name: Agent card (provider-hosted)
+    url: https://mcp.phoslabs.io/.well-known/agent-card.json
+  - type: OAuthScopes
+    url: scopes/phoslabs-io-scopes.yml
+  - type: Authentication
+    url: authentication/phoslabs-io-authentication.yml
+  - type: Documentation
+    url: https://github.com/phoslabs/behavioral-science-api#mcp-integration
+  - type: Pricing
+    url: https://phoslabs.io/credits
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -21,3 +127,69 @@ maintainers:
 common:
 - type: Website
   url: https://phoslabs.io/
+- type: Documentation
+  url: https://github.com/phoslabs/behavioral-science-api
+- type: APIReference
+  url: https://phoslabs.io/api/v1/tools
+- type: GettingStarted
+  url: https://github.com/phoslabs/behavioral-science-api#quick-start
+- type: Pricing
+  url: https://phoslabs.io/credits
+- type: Support
+  url: mailto:support@phoslabs.io
+- type: TermsOfService
+  url: https://phoslabs.io/terms
+- type: PrivacyPolicy
+  url: https://phoslabs.io/privacy
+- type: GitHubOrganization
+  url: https://github.com/phoslabs
+- type: LLMsTxt
+  url: llms/phoslabs-io-llms.txt
+- type: AgentCard
+  url: a2a/phoslabs-io-a2a.yml
+- type: WellKnown
+  name: Probed /.well-known/ index (5 served documents on mcp.phoslabs.io)
+  url: well-known/phoslabs-io-well-known.yml
+- type: MCPServer
+  url: mcp/phoslabs-io-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/phoslabs-io-tool-crosswalk.yml
+- type: Packages
+  url: packages/phoslabs-io-packages.yml
+- type: Authentication
+  url: authentication/phoslabs-io-authentication.yml
+- type: OAuthScopes
+  url: scopes/phoslabs-io-scopes.yml
+- type: Conventions
+  url: conventions/phoslabs-io-conventions.yml
+- type: ErrorCatalog
+  url: errors/phoslabs-io-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/phoslabs-io-lifecycle.yml
+- type: Conformance
+  url: conformance/phoslabs-io-conformance.yml
+- type: DataModel
+  url: data-model/phoslabs-io-data-model.yml
+- type: Overlay
+  url: overlays/phoslabs-io-openapi-overlay.yaml
+- type: RateLimits
+  url: rate-limits/phoslabs-io-rate-limits.yml
+- type: Plans
+  url: plans/phoslabs-io-plans-pricing.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: AgenticAccess
+  url: agentic-access/phoslabs-io-agentic-access.yml
+- type: DomainSecurity
+  url: security/phoslabs-io-domain-security.yml
+- type: DataSubjectRequest
+  url: regulatory/phoslabs-io-regulatory-posture.yml
+- type: Subprocessors
+  url: regulatory/phoslabs-io-regulatory-posture.yml
+- type: AITransparency
+  url: regulatory/phoslabs-io-regulatory-posture.yml
+x-enrichment:
+  date: '2026-09-19'
+  status: enriched
+  artifacts_added: 26
+  pass: local-v3

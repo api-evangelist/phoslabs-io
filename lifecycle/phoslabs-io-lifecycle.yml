@@ -1,0 +1,56 @@
+generated: '2026-09-19'
+method: searched
+source: https://phoslabs.io/terms
+derived_from: openapi/phoslabs-io-openapi.yml
+versioning:
+  scheme: uri-path
+  current_version: v1
+  base_url: https://phoslabs.io/api/v1
+  spec_url: https://phoslabs.io/api/v1/openapi.json
+  spec_version: 1.0.0
+  policy_published: false
+  note: >-
+    /api/v1/ prefix on every REST path. No written versioning policy; the terms say only that material
+    changes to the terms get 14 days' notice. The MCP product is versioned separately: the official MCP
+    registry lists io.phoslabs/commerce-intelligence at 4.0.0 (and the agent card says 4.0.0) while the live
+    server's initialize response reports serverInfo.version 1.0.0 and protocolVersion 2025-03-26 — three
+    version strings for one host.
+deprecation:
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  deprecated_operations: []
+  note: >-
+    Zero of 7 OpenAPI operations carry deprecated: true; no Sunset or Deprecation headers are documented. The
+    provider README (2026-04-04) still tabulates 15 REST tools and per-tool credit prices that the live
+    contract and GET /api/v1/tools no longer match (audit 80 -> 0 credits; pricing 15 -> 25; copy 12 -> 20;
+    nine README tools have no live route) — the surface has contracted without any deprecation notice. The
+    behavioral-science SSE MCP listing (1.0.0, 2026-03-29) remains active alongside the streamable-http one.
+status_page:
+  url: null
+  note: No status page. https://phoslabs.io/status -> 403 (unrouted); none is linked from the site, README, agent card or registry entries. GET https://mcp.phoslabs.io/health -> 200 {"status":"ok"} is a liveness probe, not a status page.
+changelog:
+  url: null
+  note: No changelog. /changelog -> 403; the GitHub repo has a single push (2026-04-04) and no releases.
+sla:
+  published: false
+  terms: '"as is" and "as available" without warranties (terms §6); liability capped at 12 months of fees (§7)'
+  support_response: 'None stated. Refund requests: "Mail support@phoslabs.io and a person reads it and replies. We are not putting a day on anything a person handles, because nothing in our system enforces one." (terms §3)'
+  change_notice: 'At least 14 days before material changes to the terms or privacy policy take effect (terms §9, privacy §9)'
+  suspension: 'Reasonable efforts to notify before suspension except in urgent abuse (terms §8)'
+time_bound_artifacts:
+  usage_log_retention: 30 days, then automatically deleted (privacy §5)
+  api_key_lifetime: duration of the account; deleted upon request (privacy §5)
+  ip_retention: not stored beyond the rate-limiting window (privacy §5)
+  agent_card_cache: 'Cache-Control: public, max-age=3600'
+release_signals:
+- {artifact: terms of service / privacy policy, effective: '2026-03-08'}
+- {artifact: MCP registry io.phoslabs/commerce-intelligence, version: 4.0.0, published: '2026-03-08'}
+- {artifact: MCP registry io.phoslabs/behavioral-science, version: 1.0.0, published: '2026-03-29'}
+- {artifact: GitHub org phoslabs + behavioral-science-api README, created: '2026-04-04', last_push: '2026-04-04'}
+- {artifact: agent card, version: 4.0.0, protocolVersion: null}
+- {artifact: live MCP serverInfo, version: 1.0.0, protocolVersion: '2025-03-26'}
+- {artifact: OpenAPI info.version, version: 1.0.0}
+- {artifact: Mind of Granite terms / privacy (consumer product on the same domain), last_updated: '2026-07-07'}
+- {artifact: TLS certificate phoslabs.io, expires: '2026-11-23'}

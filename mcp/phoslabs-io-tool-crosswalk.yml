@@ -1,0 +1,83 @@
+generated: '2026-09-19'
+method: derived
+source: >-
+  Derived by aligning the nine skills in the A2A agent card (a2a/phoslabs-io-agent-card.json), the six tools
+  in the provider's live REST listing (GET https://phoslabs.io/api/v1/tools, saved as
+  plans/phoslabs-io-api-v1-tools.json) and the seven operations in the provider-published OpenAPI
+  (openapi/phoslabs-io-openapi.yml). The hosted MCP server's tools/list is OAuth-gated and was not
+  introspected, so MCP tool names are NOT known: rows are keyed on the agent-card skill id, which is the
+  provider's own identifier for the same capability, and confidence is set accordingly.
+purpose: >-
+  Record how Phos Labs' three agent-facing projections — the OAuth-gated MCP server, the A2A-shaped discovery
+  card and the Bearer-key REST API — relate. They describe one product but are not the same surface: the REST
+  contract is the narrowest (7 operations), the card is the widest (9 skills), and the MCP inventory is
+  unverifiable anonymously.
+surfaces:
+  rest_openapi: openapi/phoslabs-io-openapi.yml
+  rest_openapi_note: 7 operations on https://phoslabs.io/api/v1 (6 POST tools + anonymous GET /api/v1/tools). All six POST tools answer 401 without a key.
+  rest_live_listing: https://phoslabs.io/api/v1/tools
+  mcp: https://mcp.phoslabs.io/mcp
+  mcp_note: 'tools/list GATED (401 invalid_token, OAuth 2.1 per RFC 9728/8414 metadata). Root path answers initialize only; /sse wants an API key.'
+  a2a: null
+  a2a_note: The agent card's url is the MCP host; message/send returns 401 "use /mcp for full MCP access". No A2A transport.
+  graphql: null
+crosswalk:
+- tool: diagnose-dropoff
+  category: conversion
+  rest: [diagnose]
+  binding: rest
+  confidence: medium
+  note: >-
+    Card skill "Diagnose Customer Drop-off" and REST diagnose (POST /api/v1/diagnose, 10 credits) describe the
+    same job on the same input (a funnel description plus optional analytics data). The inherited input
+    contract is diagnose's requestBody: funnel_description (required), data (object), industry.
+- tool: fix-checkout
+  category: conversion
+  rest: [fixCheckout]
+  binding: rest
+  confidence: medium
+  note: 'Same id on both sides; POST /api/v1/fix-checkout, 30 credits; requestBody checkout_flow (required).'
+- tool: write-product-copy
+  category: copywriting
+  rest: [copy]
+  binding: rest
+  confidence: medium
+  note: 'Card skill lists social proof, loss framing, anchoring, scarcity; REST copy says the same principles. POST /api/v1/copy, 20 credits; requestBody draft + goal (both required).'
+- tool: optimize-pricing
+  category: pricing
+  rest: [pricing]
+  binding: rest
+  confidence: medium
+  note: 'Both name anchoring and decoy pricing. POST /api/v1/pricing, 25 credits; requestBody product (required), context, persona.'
+mcp_only:
+- tool: predict-churn
+  reason: No REST operation in the OpenAPI or the live /api/v1/tools listing; the README names /churn (15 credits) but it is not served in the contract.
+- tool: personalize-approach
+  reason: No REST operation; segmentation by decision style appears only in the card.
+- tool: add-social-proof
+  reason: README names /social-proof (10 credits); absent from the OpenAPI and the live listing.
+- tool: run-experiment
+  reason: README names /experiment (15 credits); absent from the OpenAPI and the live listing.
+- tool: ethics-check
+  reason: >-
+    No REST operation. detectBiases (POST /api/v1/detect-biases) is the nearest REST neighbour but audits the
+    caller's own text for cognitive biases, not a design for dark patterns; not bound.
+rest_only:
+- capability: free full audit
+  operations: [audit]
+  note: POST /api/v1/audit, 0 credits per the live listing (the README says 80). No card skill.
+- capability: cognitive-bias detection
+  operations: [detectBiases]
+  note: POST /api/v1/detect-biases, 8 credits. No card skill (see ethics-check above).
+- capability: tool discovery
+  operations: [listTools]
+  note: GET /api/v1/tools, anonymous (security []). Returns the REST tool inventory with prices and input field lists.
+coverage:
+  card_skills: 9
+  card_skills_bound_to_rest: 4
+  card_skills_mcp_only: 5
+  rest_operations: 7
+  rest_operations_with_a_skill: 4
+  rest_only: 3
+  mcp_tools_named_by_server: 0
+  mcp_tools_introspected: false

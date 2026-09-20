@@ -1,0 +1,85 @@
+generated: '2026-09-19'
+method: searched
+probe: true
+source: https://phoslabs.io/privacy
+caveat: >-
+  Phos Labs publishes two legal sets on one domain: /terms and /privacy (effective 2026-03-08) for the API /
+  MCP product, and /granite/terms and /granite/privacy (updated 2026-07-07) for Mind of Granite, a consumer
+  decision-guidance product. The signals below are read from the API-product pages; the Granite pages are
+  cited only where they add a distinct statement. Every conventional regulatory path probed returned 403
+  (the host's answer for unrouted paths).
+signals:
+  data_subject_request:
+    url: https://phoslabs.io/privacy
+    section: '7. Your Rights'
+    channel: support@phoslabs.io
+    rights_named: [access, correction, deletion]
+    stated_sla: 'We will respond within 30 days.'
+    evidence:
+    - source: https://phoslabs.io/privacy
+      http_status: 200
+      fetched: '2026-09-19'
+      quote: 'You may request access to, correction of, or deletion of your data at any time by contacting support@phoslabs.io. We will respond within 30 days.'
+    note: >-
+      A documented channel, named rights and a stated response period. No intake form or endpoint
+      (/privacy/requests 403). Retention is also stated: usage logs 30 days, API keys for the life of the
+      account and deleted on request, IP addresses not kept beyond the rate-limit window.
+  subprocessors:
+    url: https://phoslabs.io/privacy
+    section: '4. Third-Party Services'
+    dated: '2026-03-08'
+    entries:
+    - {vendor: Stripe, purpose: Payment processing, data_shared: Billing details}
+    - {vendor: Cloudflare, purpose: 'CDN, tunneling, DDoS protection', data_shared: 'IP addresses, request metadata'}
+    - {vendor: Anthropic, purpose: AI processing, data_shared: Input data submitted to tools}
+    evidence:
+    - source: https://phoslabs.io/privacy
+      http_status: 200
+      fetched: '2026-09-19'
+      quote: 'Provider / Purpose / Data shared — Stripe: Payment processing, Billing details; Cloudflare: CDN, tunneling, DDoS protection, IP addresses, request metadata; Anthropic: AI processing, Input data submitted to tools. We do not sell, rent, or trade your data to any third party.'
+    note: >-
+      A three-row provider / purpose / data-shared table inside the privacy policy, dated by the policy's
+      effective date. Not a standalone maintained register (/legal/subprocessors 403) and no DPA is published
+      (/legal/dpa 403).
+  ai_transparency:
+    url: https://phoslabs.io/terms
+    section: '6. Disclaimer (terms); 4. Third-Party Services (privacy)'
+    evidence:
+    - source: https://phoslabs.io/terms
+      http_status: 200
+      fetched: '2026-09-19'
+      quote: 'Tool outputs constitute behavioral science analysis only. They do not constitute legal, financial, medical, or other professional advice.'
+    - source: https://phoslabs.io/privacy
+      http_status: 200
+      fetched: '2026-09-19'
+      quote: 'Anthropic — AI processing — Input data submitted to tools'
+    - source: https://phoslabs.io/granite/about
+      http_status: 200
+      fetched: '2026-09-19'
+      quote: 'The advisors are AI-generated personas inspired by real figures and well-documented ideas. They''re a thinking tool, not the real individuals, and not a substitute for professional advice.'
+    note: >-
+      The API terms disclaim the outputs and the privacy policy names the model provider that processes tool
+      inputs; the consumer product's About page states plainly that its personas are AI-generated. No
+      dedicated AI disclosure page (/ai, /ai/transparency 403), no model card, no training-data summary.
+probed_absent:
+- {url: https://phoslabs.io/accessibility, status: 403}
+- {url: https://phoslabs.io/accessibility/vpat, status: 403}
+- {url: https://phoslabs.io/legal/subprocessors, status: 403}
+- {url: https://phoslabs.io/legal/dpa, status: 403}
+- {url: https://phoslabs.io/privacy/requests, status: 403}
+- {url: https://phoslabs.io/transparency, status: 403}
+- {url: https://phoslabs.io/trust, status: 403}
+- {url: https://phoslabs.io/security, status: 403}
+- {url: https://phoslabs.io/security/sbom, status: 403}
+- {url: https://phoslabs.io/docs/data-residency, status: 403}
+- {url: https://phoslabs.io/ai, status: 403}
+- {url: https://phoslabs.io/ai/transparency, status: 403}
+- {url: https://phoslabs.io/legal/report-content, status: 403}
+- {url: https://phoslabs.io/.well-known/security.txt, status: 403}
+- {url: https://mcp.phoslabs.io/.well-known/security.txt, status: 404}
+not_found: [sbom, support_lifetime, accessibility_conformance, training_data_summary, global_privacy_control, data_residency, incident_notification, age_assurance, notice_and_action, transparency_report, exit_assistance]
+not_counted:
+- signal: age_assurance
+  reason: 'Privacy §8 states "Our services are not intended for use by individuals under the age of 18" — an eligibility statement, not an age-assurance mechanism; not recorded.'
+- signal: data_residency
+  reason: The privacy policy names Cloudflare tunneling and Anthropic processing but states no region or residency commitment.

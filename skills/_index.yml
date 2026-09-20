@@ -1,0 +1,16 @@
+generated: '2026-09-19'
+method: generated
+source: >-
+  Packaged Agent Skills generated from Phos Labs' published OpenAPI (openapi/phoslabs-io-openapi.yml, 7
+  operations). Every step is grounded in an operationId verified verbatim in the spec; cross-cutting rules
+  cite ../authentication/, ../errors/, ../conventions/ and ../plans/. Phos Labs publishes no skills or
+  AGENTS.md of its own (searched: site, GitHub org, MCP registry entries).
+skills:
+- file: phoslabs-io-diagnose-and-fix-a-funnel.md
+  name: Diagnose a funnel drop-off and redesign the checkout
+  api: openapi/phoslabs-io-openapi.yml
+  operations: [listTools, diagnose, fixCheckout]
+- file: phoslabs-io-price-and-write-an-offer.md
+  name: Price an offer and write the copy for it
+  api: openapi/phoslabs-io-openapi.yml
+  operations: [listTools, audit, pricing, copy, detectBiases]

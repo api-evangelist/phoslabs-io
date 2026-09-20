@@ -1,0 +1,120 @@
+generated: '2026-09-19'
+method: searched
+source: >-
+  openapi/phoslabs-io-openapi.yml (verbatim from https://phoslabs.io/api/v1/openapi.json) cross-checked
+  against the MCP host's RFC 8414 / RFC 9728 discovery documents, the A2A agent card, the official MCP
+  registry, https://phoslabs.io/terms and live probes of phoslabs.io and mcp.phoslabs.io on 2026-09-19.
+standards:
+- id: openapi-3.0
+  name: OpenAPI 3.0
+  conforms: true
+  evidence: >-
+    openapi/phoslabs-io-openapi.yml declares "openapi": "3.0.3" with 7 paths / 7 operations, unique
+    operationIds, summaries, descriptions, a global BearerAuth http scheme and 200/401/402 responses; served
+    from https://phoslabs.io/api/v1/openapi.json (HTTP 200, application/json, CORS *), named in the
+    provider's README and in the live GET /api/v1/tools listing ("openapi": "/api/v1/openapi.json").
+  caveat: No tags, no examples, no response schema on listTools, no 4xx schema beyond a description; 5,589 bytes.
+- id: mcp
+  name: Model Context Protocol
+  conforms: true
+  evidence: >-
+    POST https://mcp.phoslabs.io/ initialize -> 200 {"protocolVersion":"2025-03-26","capabilities":{"tools":{}},
+    "serverInfo":{"name":"Phos Labs Commerce Intelligence","version":"1.0.0"}}; two active entries in the
+    official MCP registry (io.phoslabs/commerce-intelligence streamable-http, io.phoslabs/behavioral-science
+    sse). See mcp/phoslabs-io-mcp.yml.
+  caveat: tools/list gated on every path; the anonymous root answers initialize only.
+- id: mcp-authorization
+  name: MCP Authorization (OAuth 2.1 with RFC 9728 + RFC 8414 discovery)
+  conforms: true
+  evidence: >-
+    POST /mcp -> 401 with WWW-Authenticate Bearer resource_metadata pointing at
+    /.well-known/oauth-protected-resource/mcp (200), whose authorization_servers[] resolves to an RFC 8414
+    document (200) declaring authorization_code + refresh_token, PKCE S256, registration_endpoint and
+    token_endpoint_auth_methods including none — the exact discovery chain the MCP authorization spec
+    requires.
+- id: oauth2
+  name: OAuth 2.0 / 2.1 authorization code
+  conforms: true
+  evidence: well-known/phoslabs-io-oauth-authorization-server.json — grant_types_supported [authorization_code, refresh_token], response_types_supported [code].
+- id: rfc7636-pkce
+  name: RFC 7636 PKCE
+  conforms: true
+  evidence: code_challenge_methods_supported [S256] in the authorization-server metadata.
+- id: rfc8414-as-metadata
+  name: RFC 8414 Authorization Server Metadata
+  conforms: true
+  evidence: https://mcp.phoslabs.io/.well-known/oauth-authorization-server -> 200, issuer https://mcp.phoslabs.io/ matching the host.
+- id: rfc9728-protected-resource-metadata
+  name: RFC 9728 Protected Resource Metadata
+  conforms: true
+  evidence: https://mcp.phoslabs.io/.well-known/oauth-protected-resource (and /mcp-suffixed) -> 200, resource https://mcp.phoslabs.io/mcp, bearer_methods_supported [header].
+- id: rfc7591-dynamic-client-registration
+  name: RFC 7591 Dynamic Client Registration
+  conforms: true
+  evidence: registration_endpoint https://mcp.phoslabs.io/register declared; GET returns 405 (endpoint exists, POST only). Not exercised.
+- id: rfc7009-token-revocation
+  name: RFC 7009 Token Revocation
+  conforms: true
+  evidence: revocation_endpoint https://mcp.phoslabs.io/revoke declared with revocation_endpoint_auth_methods_supported; GET 405.
+- id: oidc
+  name: OpenID Connect Discovery
+  conforms: false
+  evidence: /.well-known/openid-configuration 404 on mcp.phoslabs.io and 403 on phoslabs.io; no id_token, jwks_uri or userinfo endpoint published.
+- id: a2a
+  name: A2A Agent Card
+  conforms: false
+  evidence: >-
+    A card is served at https://mcp.phoslabs.io/.well-known/agent-card.json (200) but omits protocolVersion
+    and uses the pre-0.3 authentication.schemes field, and its url is an MCP server that rejects
+    message/send — graded flavored in a2a/phoslabs-io-a2a.yml. Recorded as not conformant to A2A 1.0.0 while
+    the discovery document itself is real.
+- id: x402
+  name: x402 payment protocol
+  conforms: false
+  evidence: >-
+    Stated by the provider in three places (terms: "x402 USDC micropayments on Base L2 are accepted for
+    individual API calls"; agent card authentication.schemes includes x402; README: phoslabs.io/x402/*), but
+    POST and GET on /x402/diagnose and /x402/audit returned 403 {"error": "Unauthorized"} on 2026-09-19 — no
+    402 challenge, no PAYMENT-REQUIRED header. Not verifiable; recorded as a claim.
+- id: rfc9457-problem-details
+  name: RFC 9457 Problem Details
+  conforms: false
+  evidence: 'Errors are {"error": string, "credits_remaining": int|null} as application/json (ErrorResponse schema; observed on 401). No application/problem+json.'
+- id: rfc6750-bearer
+  name: RFC 6750 Bearer token usage
+  conforms: partial
+  evidence: 'REST accepts Authorization: Bearer <api_key>; the 401 responses carry no WWW-Authenticate header (RFC 6750 §3 requires one). The MCP /mcp endpoint does send a compliant WWW-Authenticate Bearer challenge.'
+- id: cors
+  name: CORS (Fetch standard)
+  conforms: true
+  evidence: 'access-control-allow-origin: *, allow-methods GET, POST, OPTIONS, allow-headers Content-Type, Authorization on /api/v1/openapi.json and on the 401 from /api/v1/diagnose.'
+- id: pagination
+  name: Pagination convention
+  conforms: na
+  evidence: No list endpoint returns a collection; GET /api/v1/tools returns the whole inventory.
+- id: idempotency
+  name: Idempotency-Key convention
+  conforms: false
+  evidence: No Idempotency-Key parameter in the spec and no replay guidance published; every POST debits credits on each call. See conventions/phoslabs-io-conventions.yml.
+- id: rfc8594-sunset
+  name: RFC 8594 Sunset header / deprecation policy
+  conforms: false
+  evidence: No deprecated operations, no Sunset or Deprecation header documented; no versioning or deprecation policy page (/docs 403).
+- id: rfc9116-security-txt
+  name: RFC 9116 security.txt
+  conforms: false
+  evidence: /.well-known/security.txt 403 on phoslabs.io, 404 on mcp.phoslabs.io.
+domain_standards:
+  note: >-
+    Behavioral-science / conversion-analysis tooling has no domain interchange standard (no SCIM, OData,
+    OpenRTB, FHIR or similar shape applies). Nothing is asserted here; the slot is left empty by design
+    rather than filled.
+  declared: []
+compliance_program:
+  published: false
+  note: >-
+    No trust center, certifications (SOC 2, ISO 27001, PCI DSS, HIPAA), DPA or security page. The privacy
+    policy states "industry-standard security measures including encrypted communications (TLS), access
+    controls, and regular security reviews" and that "API keys are stored securely and never logged in
+    plaintext" — statements, not a program. probe-security-programs.py: vdp=none trust=none. No Compliance
+    pointer is emitted.

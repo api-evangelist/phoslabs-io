@@ -1,0 +1,75 @@
+generated: '2026-09-19'
+method: derived
+source: openapi/phoslabs-io-openapi.yml
+docs: https://github.com/phoslabs/behavioral-science-api
+format: json-error-string
+envelope:
+  media_type: application/json
+  schema: '#/components/schemas/ErrorResponse'
+  fields:
+  - name: error
+    type: string
+    description: Human-readable message; the only diagnostic field. No code, type URI or documentation link.
+  - name: credits_remaining
+    type: integer
+    nullable: true
+    description: Declared on both the success and error envelopes; the balance after the call. Not present on the observed 401 bodies.
+  example: {error: Invalid or inactive API key}
+  mcp_variant:
+    shape: >-
+      HTTP 401 {"error":"invalid_token","error_description":"Authentication required"} with a WWW-Authenticate
+      Bearer challenge on /mcp; {"error":"unauthorized","message":"..."} on /sse and /messages;
+      {"error":"use /mcp for full MCP access"} on the root path.
+  unrouted_paths:
+    shape: >-
+      HTTP 403 {"error": "Unauthorized"} (25 bytes, application/json) for any path phoslabs.io does not route,
+      including /docs, /api, /status, /robots.txt, /llms.txt and every /.well-known/* path; mcp.phoslabs.io
+      returns a plain-text 404 "Not Found".
+    note: 'A 403 on the primary host means "no such route", not "forbidden document". Method mismatches return a plain-text 405 ("405: Method Not Allowed").'
+  note: >-
+    No RFC 9457 Problem Details, no stable error codes, no application/problem+json. The spec documents only
+    two error statuses per operation (401, 402) and no 400/429/5xx; the invalid-input, insufficient-credits and
+    rate-limit bodies were not observable without a key.
+problem_types:
+- status: 401
+  title: Missing Authorization header
+  observed: '{"error": "Missing Authorization header. Use: Authorization: Bearer <api_key>"} on POST /api/v1/diagnose with no header'
+  applies_to: [audit, diagnose, fixCheckout, copy, pricing, detectBiases]
+  remediation: 'Send Authorization: Bearer <api_key>. Keys are issued by POST /api/trial {email, name} or by purchasing credits at https://phoslabs.io/credits.'
+- status: 401
+  title: Invalid API key
+  source: 'OpenAPI 401 "Invalid API key" on all six POST operations'
+  observed: '{"error": "Invalid or inactive API key"} on POST /api/v1/diagnose with a bogus bearer; no WWW-Authenticate header'
+  remediation: 'The key is unknown or has been deactivated ("API keys: duration of your account, deleted upon request" — privacy policy). Obtain a new key; do not retry with the same one.'
+- status: 402
+  title: Insufficient credits
+  source: 'OpenAPI 402 "Insufficient credits" on all six POST operations'
+  observed: not observed (requires a valid key with a zero balance)
+  remediation: >-
+    Buy a credit pack (EUR 5 / 500, EUR 20 / 2,000, EUR 100 / 10,000 at https://phoslabs.io/credits); credits
+    are topped up on purchase. This is a billing 402, not an x402 payment challenge — no PAYMENT-REQUIRED
+    header is documented for it. audit costs 0 credits and can be called on an empty balance.
+- status: 403
+  title: Unrouted path on phoslabs.io
+  observed: '{"error": "Unauthorized"} on /docs, /api/v1 (GET), /x402/*, /.well-known/*, /status, /changelog'
+  remediation: Not an authorization failure; the path is not served. The only routed API paths are the seven in the OpenAPI plus POST /api/trial.
+- status: 405
+  title: Method not allowed
+  observed: '"405: Method Not Allowed" (text/plain) on GET /api/v1/diagnose, GET /api/trial, GET /api/v1/openapi.yaml'
+  remediation: The six tools and /api/trial are POST-only; /api/v1/tools and /api/v1/openapi.json are GET-only.
+- status: 401
+  title: MCP authentication required
+  observed: '{"error": "invalid_token", "error_description": "Authentication required"} on POST https://mcp.phoslabs.io/mcp; WWW-Authenticate: Bearer error="invalid_token", resource_metadata="https://mcp.phoslabs.io/.well-known/oauth-protected-resource/mcp"'
+  remediation: Follow the RFC 9728 -> RFC 8414 chain and complete the OAuth 2.1 authorization-code + PKCE flow (dynamic registration at /register); see authentication/phoslabs-io-authentication.yml.
+- status: 401
+  title: MCP API key required (SSE transport)
+  observed: '{"error":"unauthorized","message":"API key required. Pass Authorization: Bearer <key> header."} on GET/POST /sse and /messages'
+  remediation: Use a REST API key as the Bearer token on the legacy SSE transport, or use /mcp with OAuth.
+- status: 401
+  title: MCP root path refuses non-initialize methods
+  observed: '{"error":"use /mcp for full MCP access"} on tools/list, ping, prompts/list, resources/list, tools/call and notifications/initialized at https://mcp.phoslabs.io/'
+  remediation: Point the client at https://mcp.phoslabs.io/mcp; the root only answers initialize.
+undocumented:
+- {status: 400, note: 'Validation failures (missing required body fields) are not in the spec; not observable without a key.'}
+- {status: 429, note: 'Terms say "Rate limits apply to all endpoints. Current limits are documented in our API reference" — the reference (/docs) is 403 and no 429 shape or Retry-After is documented.'}
+- {status: 5xx, note: Not documented.}

@@ -1,0 +1,137 @@
+generated: '2026-09-19'
+method: probed
+source: https://mcp.phoslabs.io/.well-known/agent-card.json
+card:
+  file: a2a/phoslabs-io-agent-card.json
+discovery:
+  path: /.well-known/agent-card.json
+  canonical: true
+  host: mcp.phoslabs.io
+  note: >-
+    Served at BOTH the A2A 1.0.0 / RFC 8615 canonical path and the pre-0.3 legacy
+    /.well-known/agent.json; the two bodies are byte-identical (5,215 bytes, cmp exit 0). The card lives on
+    the MCP host, not the primary domain: https://phoslabs.io/.well-known/agent-card.json and agent.json both
+    return 403 {"error": "Unauthorized"}, the primary host's answer for every path it does not serve.
+    a2aregistry.org lists this operator with wellKnownURI https://mcp.phoslabs.io/.well-known/agent.json,
+    which is the lead that brought Phos Labs into the catalog (harvest:a2a-registry, 2026-09-19).
+  ownership: >-
+    The card is served from mcp.phoslabs.io, a subdomain of the provider's registrable domain;
+    provider.organization is "Phos Labs" with provider.url https://phoslabs.io; url points at
+    https://mcp.phoslabs.io on the same host, whose root answered an MCP initialize with serverInfo.name
+    "Phos Labs Commerce Intelligence"; the same product is registered in the official MCP registry as
+    io.phoslabs/commerce-intelligence version 4.0.0, matching the card's version.
+x-evidence:
+  fetched: '2026-09-19'
+  url: https://mcp.phoslabs.io/.well-known/agent-card.json
+  http_status: 200
+  content_type: application/json
+  body_bytes: 5215
+  cache_control: public, max-age=3600
+  body_parses_as: JSON object with AgentCard shape (name, url, version, capabilities, skills present; protocolVersion ABSENT)
+  corroborating_probes:
+  - url: https://mcp.phoslabs.io/.well-known/agent.json
+    http_status: 200
+    note: Identical body to the canonical path (byte-for-byte).
+  - url: https://phoslabs.io/.well-known/agent-card.json
+    http_status: 403
+    note: '{"error": "Unauthorized"} — the primary host does not serve the card.'
+  - url: https://phoslabs.io/.well-known/agent.json
+    http_status: 403
+  - url: https://mcp.phoslabs.io/
+    method: POST message/send (A2A JSON-RPC 2.0, no credentials)
+    http_status: 401
+    body: '{"error":"use /mcp for full MCP access"}'
+    note: >-
+      The card's url is an MCP server, not an A2A JSON-RPC endpoint. The same URL answered an MCP initialize
+      request with HTTP 200 and rejects every other method with the message above. No A2A endpoint was found on
+      any host; the card is a discovery document for an MCP-served product.
+  - url: https://phoslabs.io/docs
+    http_status: 403
+    note: The card's documentationUrl is dead; the working documentation is the README at https://github.com/phoslabs/behavioral-science-api.
+  - url: https://a2aregistry.org/api/agents?search=phos
+    http_status: 200
+    note: >-
+      The registry's copy of the card carries protocolVersion "0.3.0", capabilities.stateTransitionHistory
+      false, security [] and securitySchemes {} — fields the live card does not carry. Either the registry
+      normalises cards on ingest or the provider has since changed the document; the live body is what is
+      graded here.
+agent_card:
+  name: Phos Labs
+  description: >-
+    Commerce intelligence for AI agents. Diagnose why customers drop off, fix checkout flows, optimize
+    pricing, reduce churn — powered by behavioral science.
+  version: 4.0.0
+  url: https://mcp.phoslabs.io
+  documentation_url: https://phoslabs.io/docs
+  provider:
+    organization: Phos Labs
+    url: https://phoslabs.io
+  protocol_version: null
+  capabilities:
+    streaming: false
+    push_notifications: false
+  authentication:
+    schemes: [apiKey, x402]
+  default_input_modes: [text/plain, application/json]
+  default_output_modes: [application/json]
+  skill_count: 9
+  skills:
+  - {id: diagnose-dropoff, name: Diagnose Customer Drop-off}
+  - {id: fix-checkout, name: Fix Checkout Flow}
+  - {id: write-product-copy, name: Write Converting Product Copy}
+  - {id: optimize-pricing, name: Optimize Pricing Strategy}
+  - {id: predict-churn, name: Predict Customer Churn}
+  - {id: personalize-approach, name: Personalize Sales Approach}
+  - {id: add-social-proof, name: Add Social Proof Signals}
+  - {id: run-experiment, name: Design A/B Experiment}
+  - {id: ethics-check, name: Ethics & Dark Pattern Audit}
+  non_standard_fields: [authentication]
+conformance:
+  spec: A2A 1.0.0
+  grade: flavored
+  protocol_version: null
+  preferred_transport: null
+  transport: 'none declared (single top-level url, which is an MCP endpoint)'
+  hard_checks:
+    capabilities_is_object: true
+    protocol_version_present: false
+    skills_is_array: true
+  optional_fields:
+    default_input_modes: true
+    default_output_modes: true
+    preferred_transport: false
+  grade_basis: >-
+    Fails one of the three A2A 1.0.0 hard checks: protocolVersion is absent. capabilities is an object
+    (streaming, pushNotifications) and skills is an array of nine fully-populated skills (id, name,
+    description, tags, examples, inputModes, outputModes), and both default mode lists are declared. The card
+    also uses the pre-0.3 `authentication.schemes` field in place of `securitySchemes`/`security`, and its url
+    is not an A2A endpoint. Flavored: a well-formed discovery document in an A2A-shaped envelope, describing an
+    MCP product.
+  deviations:
+  - field: protocolVersion
+    observed: absent
+    note: Hard failure. A 1.0-era client cannot tell which protocol version the agent speaks.
+  - field: authentication
+    observed: '{schemes: [apiKey, x402]}'
+    note: Pre-0.3 field; A2A 0.3+ expresses this as securitySchemes + security. x402 is not a registered security scheme type.
+  - field: url
+    observed: https://mcp.phoslabs.io (MCP server)
+    note: >-
+      Answers MCP initialize; a JSON-RPC message/send returns 401 "use /mcp for full MCP access". No A2A
+      transport is served, so the card is discovery-only.
+  - field: documentationUrl
+    observed: https://phoslabs.io/docs (HTTP 403)
+    note: Dead link inside the card.
+  - field: preferredTransport / additionalInterfaces
+    observed: absent
+    note: Optional in 1.0; recorded as a gap.
+  - field: skills[].security
+    observed: absent
+    note: No per-skill security requirements; the top-level authentication field is the only statement.
+surface_relationship:
+  note: >-
+    The nine card skills are the product's marketing-level capability list. The REST contract
+    (openapi/phoslabs-io-openapi.yml, 7 operations) covers four of them directly (diagnose, fix-checkout,
+    copy, pricing); predict-churn, personalize-approach, add-social-proof, run-experiment and ethics-check
+    have no REST operation in the published spec and are reachable, if at all, only through the OAuth-gated
+    MCP endpoint whose tools/list could not be introspected. See mcp/phoslabs-io-tool-crosswalk.yml.

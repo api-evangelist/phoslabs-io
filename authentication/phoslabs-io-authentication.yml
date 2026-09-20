@@ -1,0 +1,56 @@
+generated: '2026-09-19'
+method: searched
+source: openapi/phoslabs-io-openapi.yml
+docs:
+- https://github.com/phoslabs/behavioral-science-api#access-methods
+- https://phoslabs.io/api/v1/tools
+- https://mcp.phoslabs.io/.well-known/oauth-authorization-server
+- https://mcp.phoslabs.io/.well-known/oauth-protected-resource/mcp
+summary:
+  types: [http, oauth2, apiKey]
+  api_key_in: [header]
+  oauth2_flows: [authorizationCode]
+  surfaces:
+  - {surface: 'REST https://phoslabs.io/api/v1/*', auth: 'Bearer API key (http bearer)', anonymous_operations: [listTools]}
+  - {surface: 'MCP https://mcp.phoslabs.io/mcp (Streamable HTTP)', auth: 'OAuth 2.1 authorization code + PKCE, dynamic client registration'}
+  - {surface: 'MCP https://mcp.phoslabs.io/sse and /messages (legacy SSE)', auth: 'API key as Bearer token'}
+  - {surface: 'x402 https://phoslabs.io/x402/* (stated)', auth: 'USDC on Base L2 per call — every path returned 403 on 2026-09-19; unverified'}
+key_issuance:
+  self_serve: true
+  method: 'POST https://phoslabs.io/api/trial with {"email": "...", "name": "..."} (per GET /api/v1/tools get_key); GET on the path is 405'
+  free_credits: '100 for new accounts (README) / 20 on MCP connect (credits page)'
+  purchase: https://phoslabs.io/credits
+  note: Not exercised; no key was provisioned by this probe.
+schemes:
+- name: BearerAuth
+  type: http
+  scheme: bearer
+  description: API key from /api/trial or purchased at /credits
+  header: 'Authorization: Bearer <api_key>'
+  sources: [openapi/phoslabs-io-openapi.yml]
+  observed:
+  - 'POST /api/v1/diagnose without the header -> 401 {"error": "Missing Authorization header. Use: Authorization: Bearer <api_key>"}'
+  - 'POST /api/v1/diagnose with an invalid key -> 401 {"error": "Invalid or inactive API key"}; no WWW-Authenticate header'
+- name: mcp-oauth
+  type: oauth2
+  flows:
+    authorizationCode:
+      authorizationUrl: https://mcp.phoslabs.io/authorize
+      tokenUrl: https://mcp.phoslabs.io/token
+      refreshUrl: https://mcp.phoslabs.io/token
+      scopes: {claudeai: null}
+  pkce: S256
+  dynamic_client_registration: https://mcp.phoslabs.io/register
+  revocation: https://mcp.phoslabs.io/revoke
+  protected_resource: https://mcp.phoslabs.io/mcp
+  sources: [well-known/phoslabs-io-oauth-authorization-server.json, well-known/phoslabs-io-oauth-protected-resource-mcp.json]
+  observed:
+  - 'POST /mcp (initialize) -> 401 WWW-Authenticate: Bearer error="invalid_token", error_description="Authentication required", resource_metadata="https://mcp.phoslabs.io/.well-known/oauth-protected-resource/mcp"'
+- name: mcp-sse-api-key
+  type: apiKey
+  in: header
+  header: 'Authorization: Bearer <key>'
+  applies_to: ['https://mcp.phoslabs.io/sse', 'https://mcp.phoslabs.io/messages']
+  sources: [live probe 2026-09-19]
+  observed:
+  - 'GET /sse -> 401 {"error":"unauthorized","message":"API key required. Pass Authorization: Bearer <key> header."}'

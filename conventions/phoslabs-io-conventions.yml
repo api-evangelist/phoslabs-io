@@ -1,0 +1,92 @@
+generated: '2026-09-19'
+method: searched
+source: https://github.com/phoslabs/behavioral-science-api
+derived_from: openapi/phoslabs-io-openapi.yml
+docs:
+- https://github.com/phoslabs/behavioral-science-api#quick-start
+- https://phoslabs.io/api/v1/tools
+- https://phoslabs.io/credits
+- https://phoslabs.io/terms
+base_url: https://phoslabs.io/api/v1
+media_type: application/json
+auth:
+  style: 'Authorization: Bearer <api_key> on every REST operation except GET /api/v1/tools; OAuth 2.1 on the MCP /mcp endpoint; API-key bearer on the MCP SSE transport'
+  detail: authentication/phoslabs-io-authentication.yml
+write_surface:
+  exists: false
+  side_effects: true
+  note: >-
+    No operation creates, updates or deletes a resource the caller can later address: each of the six POST
+    tools computes an analysis and returns it. Every call except audit does, however, debit the account's
+    credit balance (diagnose 10, fix-checkout 30, copy 20, pricing 25, detect-biases 8; 1 credit = EUR 0.01),
+    so a repeated request has a monetary side effect even though it has no resource side effect. That is the
+    property the idempotency and reversibility verdicts below are about.
+idempotency:
+  coverage: none
+  supported: false
+  header: null
+  scope: []
+  retention: null
+  description: >-
+    No Idempotency-Key header or equivalent is declared in the contract or documented anywhere the provider
+    publishes. A retried POST is a second tool call and is billed again; the response carries
+    credits_remaining so an agent can detect the double debit after the fact but cannot prevent it. The
+    exception is audit, which costs 0 credits and is therefore safe to repeat.
+dry_run:
+  mode: none
+  note: >-
+    No test mode, sandbox key prefix or dry-run flag. The free audit call (0 credits) and the free starter
+    credits (20 on connect / 100 for a new account) are the only ways to exercise the API without spending,
+    and both run the real analysis against the real balance.
+reversibility:
+  grade: none
+  write_surface: false
+  operations: []
+  window: null
+  note: >-
+    No reversal operation exists in the contract (no cancel, refund, void, undo). Terms §3: "Nothing refunds
+    credits automatically. Mail support@phoslabs.io and a person reads it and replies. We are not putting a
+    day on anything a person handles" — a manual channel with no stated window. For x402: "Payments made per
+    call on a blockchain cannot be reversed once they go through." Nothing an agent computes here needs
+    reversing; the spend does, and cannot be through the API.
+pagination:
+  style: na
+  note: No collection endpoint. GET /api/v1/tools returns the complete inventory as an object keyed by tool name.
+filtering_and_sorting:
+  supported: false
+field_expansion:
+  supported: false
+sparse_fieldsets:
+  supported: false
+metadata:
+  supported: partial
+  note: >-
+    Every response envelope (success and error) declares credits_remaining (integer, nullable) — the one
+    piece of account state the API returns. Requests accept optional context fields (industry, goal, context,
+    persona, data) that shape the analysis; no caller-supplied correlation metadata is echoed.
+request_id_tracing:
+  header: null
+  note: No request-id header documented or returned; live responses carry only Cloudflare's cf-ray.
+versioning:
+  style: uri-path
+  current: v1
+  detail: lifecycle/phoslabs-io-lifecycle.yml
+error_envelope:
+  shape: '{"error": string, "credits_remaining": integer|null}'
+  format: json-error-string
+  detail: errors/phoslabs-io-problem-types.yml
+success_envelope:
+  shape: '{"success": true, "result": object (tool-specific), "credits_remaining": integer|null}'
+  note: result is untyped in the contract ("Tool-specific result"); the response shape of each tool is not published.
+rate_limit_signaling:
+  headers: []
+  exhaustion_status: undocumented
+  note: 'Terms §5: "Rate limits apply to all endpoints. Current limits are documented in our API reference." The reference (/docs) returns 403. No RateLimit-* or Retry-After header was observed on the 401 responses. See rate-limits/phoslabs-io-rate-limits.yml.'
+billing_semantics:
+  unit: 1 credit = EUR 0.01
+  per_call_price: 'declared per tool in GET /api/v1/tools (credits + price + currency) and in each operation description in the OpenAPI ("10 credits.")'
+  insufficient_balance: HTTP 402 Insufficient credits (billing, not x402)
+  discovery: GET /api/v1/tools is anonymous and is the machine-readable price list; saved as plans/phoslabs-io-api-v1-tools.json
+cors:
+  enabled: true
+  headers: 'access-control-allow-origin: *; allow-methods GET, POST, OPTIONS; allow-headers Content-Type, Authorization'
