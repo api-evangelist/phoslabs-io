@@ -43,70 +43,19 @@ tags_raw:
 - Decision Intelligence
 - Agentic Commerce
 apis:
-- aid: phoslabs-io:behavioral-science-api
-  name: Behavioral Science API
-  description: >-
-    Bearer-key JSON REST API on phoslabs.io. The provider-published OpenAPI 3.0.3 (verbatim in openapi/)
-    declares seven operations — six metered POST tools (audit 0 credits, diagnose 10, fixCheckout 30, copy 20,
-    pricing 25, detectBiases 8; 1 credit = EUR 0.01) and an anonymous GET /api/v1/tools (listTools) that
-    returns the live inventory with prices and input fields. Keys are issued by POST /api/trial or by buying
-    credits. Every response carries credits_remaining; errors are {"error": string}; no Idempotency-Key, no
-    reversal path, rate limits unpublished. The provider README lists nine further tools the contract does
-    not serve.
-  humanURL: https://github.com/phoslabs/behavioral-science-api
-  baseURL: https://phoslabs.io/api/v1
-  tags:
-  - Behavioral Science
-  - Conversion Optimization
-  - Pricing
-  - Copywriting
-  properties:
-  - type: OpenAPI
-    url: openapi/phoslabs-io-openapi.yml
-  - type: OpenAPI
-    name: OpenAPI (provider-hosted)
-    url: https://phoslabs.io/api/v1/openapi.json
-  - type: Documentation
-    url: https://github.com/phoslabs/behavioral-science-api
-  - type: APIReference
-    url: https://phoslabs.io/api/v1/tools
-  - type: GettingStarted
-    url: https://github.com/phoslabs/behavioral-science-api#quick-start
-  - type: Authentication
-    url: authentication/phoslabs-io-authentication.yml
-  - type: Conventions
-    url: conventions/phoslabs-io-conventions.yml
-  - type: ErrorCatalog
-    url: errors/phoslabs-io-problem-types.yml
-  - type: DataModel
-    url: data-model/phoslabs-io-data-model.yml
-  - type: Overlay
-    url: overlays/phoslabs-io-openapi-overlay.yaml
-  - type: RateLimits
-    url: rate-limits/phoslabs-io-rate-limits.yml
-  - type: Plans
-    url: plans/phoslabs-io-plans-pricing.yml
-  - type: Lifecycle
-    url: lifecycle/phoslabs-io-lifecycle.yml
-  - type: AgentSkill
-    url: skills/phoslabs-io-diagnose-and-fix-a-funnel.md
-  - type: AgentSkill
-    url: skills/phoslabs-io-price-and-write-an-offer.md
-  - type: AgenticAccess
-    url: agentic-access/phoslabs-io-agentic-access.yml
 - aid: phoslabs-io:phos-labs-mcp-server
   name: Phos Labs MCP Server
   description: >-
-    Hosted, remote Model Context Protocol server. POST https://mcp.phoslabs.io/mcp is Streamable HTTP behind
-    OAuth 2.1: the 401 challenge names RFC 9728 protected-resource metadata, whose authorization server
-    (https://mcp.phoslabs.io/) publishes RFC 8414 metadata with authorization_code + refresh_token, PKCE S256,
-    dynamic client registration and one scope, claudeai. The root path answers an anonymous initialize
-    (protocolVersion 2025-03-26, serverInfo "Phos Labs Commerce Intelligence") and refuses every other method;
-    /sse and /messages accept a REST API key as the Bearer token. Registered in the official MCP registry as
-    io.phoslabs/commerce-intelligence (4.0.0) and io.phoslabs/behavioral-science (1.0.0). tools/list is gated,
-    so the tool inventory is recorded from the agent card and REST listing without input schemas. The A2A
-    agent card served on this host at /.well-known/agent-card.json (and agent.json) describes this server and
-    grades flavored (no protocolVersion).
+    Hosted, remote Model Context Protocol server. POST https://mcp.phoslabs.io/mcp is Streamable HTTP
+    behind OAuth 2.1: the 401 challenge names RFC 9728 protected-resource metadata, whose authorization
+    server (https://mcp.phoslabs.io/) publishes RFC 8414 metadata with authorization_code + refresh_token,
+    PKCE S256, dynamic client registration and one scope, claudeai. The root path answers an anonymous
+    initialize (protocolVersion 2025-03-26, serverInfo "Phos Labs Commerce Intelligence") and refuses
+    every other method; /sse and /messages accept a REST API key as the Bearer token. Registered in the
+    official MCP registry as io.phoslabs/commerce-intelligence (4.0.0) and io.phoslabs/behavioral-science
+    (1.0.0). tools/list is gated, so the tool inventory is recorded from the agent card and REST listing
+    without input schemas. The A2A agent card served on this host at /.well-known/agent-card.json (and
+    agent.json) describes this server and grades flavored (no protocolVersion).
   humanURL: https://github.com/phoslabs/behavioral-science-api#mcp-integration
   baseURL: https://mcp.phoslabs.io/mcp
   tags:
@@ -131,12 +80,240 @@ apis:
     url: https://github.com/phoslabs/behavioral-science-api#mcp-integration
   - type: Pricing
     url: https://phoslabs.io/credits
+- aid: phoslabs-io:phoslabs-io-audit-api
+  name: Phos Labs Audit API
+  description: The Audit API from Phos Labs — 1 operation(s) for audit.
+  humanURL: https://github.com/phoslabs/behavioral-science-api
+  baseURL: https://phoslabs.io/api/v1
+  tags:
+  - Audit
+  properties:
+  - type: OpenAPI
+    url: openapi/phoslabs-io-audit-api-openapi.yml
+  - type: Documentation
+    url: https://github.com/phoslabs/behavioral-science-api
+  - type: APIReference
+    url: https://phoslabs.io/api/v1/tools
+  - type: GettingStarted
+    url: https://github.com/phoslabs/behavioral-science-api#quick-start
+  - type: Authentication
+    url: authentication/phoslabs-io-authentication.yml
+  - type: Conventions
+    url: conventions/phoslabs-io-conventions.yml
+  - type: ErrorCatalog
+    url: errors/phoslabs-io-problem-types.yml
+  - type: DataModel
+    url: data-model/phoslabs-io-data-model.yml
+  - type: RateLimits
+    url: rate-limits/phoslabs-io-rate-limits.yml
+  - type: Plans
+    url: plans/phoslabs-io-plans-pricing.yml
+  - type: Lifecycle
+    url: lifecycle/phoslabs-io-lifecycle.yml
+  - type: AgenticAccess
+    url: agentic-access/phoslabs-io-agentic-access.yml
+- aid: phoslabs-io:phoslabs-io-copy-api
+  name: Phos Labs Copy API
+  description: The Copy API from Phos Labs — 1 operation(s) for copy.
+  humanURL: https://github.com/phoslabs/behavioral-science-api
+  baseURL: https://phoslabs.io/api/v1
+  tags:
+  - Copy
+  properties:
+  - type: OpenAPI
+    url: openapi/phoslabs-io-copy-api-openapi.yml
+  - type: Documentation
+    url: https://github.com/phoslabs/behavioral-science-api
+  - type: APIReference
+    url: https://phoslabs.io/api/v1/tools
+  - type: GettingStarted
+    url: https://github.com/phoslabs/behavioral-science-api#quick-start
+  - type: Authentication
+    url: authentication/phoslabs-io-authentication.yml
+  - type: Conventions
+    url: conventions/phoslabs-io-conventions.yml
+  - type: ErrorCatalog
+    url: errors/phoslabs-io-problem-types.yml
+  - type: DataModel
+    url: data-model/phoslabs-io-data-model.yml
+  - type: RateLimits
+    url: rate-limits/phoslabs-io-rate-limits.yml
+  - type: Plans
+    url: plans/phoslabs-io-plans-pricing.yml
+  - type: Lifecycle
+    url: lifecycle/phoslabs-io-lifecycle.yml
+  - type: AgenticAccess
+    url: agentic-access/phoslabs-io-agentic-access.yml
+- aid: phoslabs-io:phoslabs-io-detect-biases-api
+  name: Phos Labs Detect Biases API
+  description: The Detect Biases API from Phos Labs — 1 operation(s) for detect biases.
+  humanURL: https://github.com/phoslabs/behavioral-science-api
+  baseURL: https://phoslabs.io/api/v1
+  tags:
+  - Detect Biases
+  properties:
+  - type: OpenAPI
+    url: openapi/phoslabs-io-detect-biases-api-openapi.yml
+  - type: Documentation
+    url: https://github.com/phoslabs/behavioral-science-api
+  - type: APIReference
+    url: https://phoslabs.io/api/v1/tools
+  - type: GettingStarted
+    url: https://github.com/phoslabs/behavioral-science-api#quick-start
+  - type: Authentication
+    url: authentication/phoslabs-io-authentication.yml
+  - type: Conventions
+    url: conventions/phoslabs-io-conventions.yml
+  - type: ErrorCatalog
+    url: errors/phoslabs-io-problem-types.yml
+  - type: DataModel
+    url: data-model/phoslabs-io-data-model.yml
+  - type: RateLimits
+    url: rate-limits/phoslabs-io-rate-limits.yml
+  - type: Plans
+    url: plans/phoslabs-io-plans-pricing.yml
+  - type: Lifecycle
+    url: lifecycle/phoslabs-io-lifecycle.yml
+  - type: AgenticAccess
+    url: agentic-access/phoslabs-io-agentic-access.yml
+- aid: phoslabs-io:phoslabs-io-diagnose-api
+  name: Phos Labs Diagnose API
+  description: The Diagnose API from Phos Labs — 1 operation(s) for diagnose.
+  humanURL: https://github.com/phoslabs/behavioral-science-api
+  baseURL: https://phoslabs.io/api/v1
+  tags:
+  - Diagnose
+  properties:
+  - type: OpenAPI
+    url: openapi/phoslabs-io-diagnose-api-openapi.yml
+  - type: Documentation
+    url: https://github.com/phoslabs/behavioral-science-api
+  - type: APIReference
+    url: https://phoslabs.io/api/v1/tools
+  - type: GettingStarted
+    url: https://github.com/phoslabs/behavioral-science-api#quick-start
+  - type: Authentication
+    url: authentication/phoslabs-io-authentication.yml
+  - type: Conventions
+    url: conventions/phoslabs-io-conventions.yml
+  - type: ErrorCatalog
+    url: errors/phoslabs-io-problem-types.yml
+  - type: DataModel
+    url: data-model/phoslabs-io-data-model.yml
+  - type: RateLimits
+    url: rate-limits/phoslabs-io-rate-limits.yml
+  - type: Plans
+    url: plans/phoslabs-io-plans-pricing.yml
+  - type: Lifecycle
+    url: lifecycle/phoslabs-io-lifecycle.yml
+  - type: AgenticAccess
+    url: agentic-access/phoslabs-io-agentic-access.yml
+- aid: phoslabs-io:phoslabs-io-fix-checkout-api
+  name: Phos Labs Fix Checkout API
+  description: The Fix Checkout API from Phos Labs — 1 operation(s) for fix checkout.
+  humanURL: https://github.com/phoslabs/behavioral-science-api
+  baseURL: https://phoslabs.io/api/v1
+  tags:
+  - Fix Checkout
+  properties:
+  - type: OpenAPI
+    url: openapi/phoslabs-io-fix-checkout-api-openapi.yml
+  - type: Documentation
+    url: https://github.com/phoslabs/behavioral-science-api
+  - type: APIReference
+    url: https://phoslabs.io/api/v1/tools
+  - type: GettingStarted
+    url: https://github.com/phoslabs/behavioral-science-api#quick-start
+  - type: Authentication
+    url: authentication/phoslabs-io-authentication.yml
+  - type: Conventions
+    url: conventions/phoslabs-io-conventions.yml
+  - type: ErrorCatalog
+    url: errors/phoslabs-io-problem-types.yml
+  - type: DataModel
+    url: data-model/phoslabs-io-data-model.yml
+  - type: RateLimits
+    url: rate-limits/phoslabs-io-rate-limits.yml
+  - type: Plans
+    url: plans/phoslabs-io-plans-pricing.yml
+  - type: Lifecycle
+    url: lifecycle/phoslabs-io-lifecycle.yml
+  - type: AgenticAccess
+    url: agentic-access/phoslabs-io-agentic-access.yml
+- aid: phoslabs-io:phoslabs-io-pricing-api
+  name: Phos Labs Pricing API
+  description: The Pricing API from Phos Labs — 1 operation(s) for pricing.
+  humanURL: https://github.com/phoslabs/behavioral-science-api
+  baseURL: https://phoslabs.io/api/v1
+  tags:
+  - Pricing
+  properties:
+  - type: OpenAPI
+    url: openapi/phoslabs-io-pricing-api-openapi.yml
+  - type: Documentation
+    url: https://github.com/phoslabs/behavioral-science-api
+  - type: APIReference
+    url: https://phoslabs.io/api/v1/tools
+  - type: GettingStarted
+    url: https://github.com/phoslabs/behavioral-science-api#quick-start
+  - type: Authentication
+    url: authentication/phoslabs-io-authentication.yml
+  - type: Conventions
+    url: conventions/phoslabs-io-conventions.yml
+  - type: ErrorCatalog
+    url: errors/phoslabs-io-problem-types.yml
+  - type: DataModel
+    url: data-model/phoslabs-io-data-model.yml
+  - type: RateLimits
+    url: rate-limits/phoslabs-io-rate-limits.yml
+  - type: Plans
+    url: plans/phoslabs-io-plans-pricing.yml
+  - type: Lifecycle
+    url: lifecycle/phoslabs-io-lifecycle.yml
+  - type: AgenticAccess
+    url: agentic-access/phoslabs-io-agentic-access.yml
+- aid: phoslabs-io:phoslabs-io-tools-api
+  name: Phos Labs Tools API
+  description: The Tools API from Phos Labs — 1 operation(s) for tools.
+  humanURL: https://github.com/phoslabs/behavioral-science-api
+  baseURL: https://phoslabs.io/api/v1
+  tags:
+  - Tools
+  properties:
+  - type: OpenAPI
+    url: openapi/phoslabs-io-tools-api-openapi.yml
+  - type: Documentation
+    url: https://github.com/phoslabs/behavioral-science-api
+  - type: APIReference
+    url: https://phoslabs.io/api/v1/tools
+  - type: GettingStarted
+    url: https://github.com/phoslabs/behavioral-science-api#quick-start
+  - type: Authentication
+    url: authentication/phoslabs-io-authentication.yml
+  - type: Conventions
+    url: conventions/phoslabs-io-conventions.yml
+  - type: ErrorCatalog
+    url: errors/phoslabs-io-problem-types.yml
+  - type: DataModel
+    url: data-model/phoslabs-io-data-model.yml
+  - type: RateLimits
+    url: rate-limits/phoslabs-io-rate-limits.yml
+  - type: Plans
+    url: plans/phoslabs-io-plans-pricing.yml
+  - type: Lifecycle
+    url: lifecycle/phoslabs-io-lifecycle.yml
+  - type: AgenticAccess
+    url: agentic-access/phoslabs-io-agentic-access.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: AgentSkill
+  url: skills/phoslabs-io-diagnose-and-fix-a-funnel.md
+- type: AgentSkill
+  url: skills/phoslabs-io-price-and-write-an-offer.md
 - type: Website
   url: https://phoslabs.io/
 - type: Documentation

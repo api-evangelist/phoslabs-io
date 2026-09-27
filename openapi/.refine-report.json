@@ -1,0 +1,63 @@
+{
+  "provider": "phoslabs-io",
+  "sources": [
+    "_original/phoslabs-io-openapi.json",
+    "phoslabs-io-openapi.yml"
+  ],
+  "outputs": [
+    "phoslabs-io-audit-api-openapi.yml",
+    "phoslabs-io-copy-api-openapi.yml",
+    "phoslabs-io-detect-biases-api-openapi.yml",
+    "phoslabs-io-diagnose-api-openapi.yml",
+    "phoslabs-io-fix-checkout-api-openapi.yml",
+    "phoslabs-io-pricing-api-openapi.yml",
+    "phoslabs-io-tools-api-openapi.yml"
+  ],
+  "archived": [
+    "archived openapi/phoslabs-io-openapi.yml"
+  ],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "phoslabs-io-openapi.json: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "phoslabs-io-openapi.json: tagged paths POST /api/v1/audit -> Audit",
+    "phoslabs-io-openapi.json: tagged paths POST /api/v1/diagnose -> Diagnose",
+    "phoslabs-io-openapi.json: tagged paths POST /api/v1/fix-checkout -> Fix Checkout",
+    "phoslabs-io-openapi.json: tagged paths POST /api/v1/copy -> Copy",
+    "phoslabs-io-openapi.json: tagged paths POST /api/v1/pricing -> Pricing",
+    "phoslabs-io-openapi.json: tagged paths POST /api/v1/detect-biases -> Detect Biases",
+    "phoslabs-io-openapi.json: tagged paths GET /api/v1/tools -> Tools",
+    "phoslabs-io-openapi.json: declared missing tag: Audit",
+    "phoslabs-io-openapi.json: declared missing tag: Copy",
+    "phoslabs-io-openapi.json: declared missing tag: Detect Biases",
+    "phoslabs-io-openapi.json: declared missing tag: Diagnose",
+    "phoslabs-io-openapi.json: declared missing tag: Fix Checkout",
+    "phoslabs-io-openapi.json: declared missing tag: Pricing",
+    "phoslabs-io-openapi.json: declared missing tag: Tools",
+    "phoslabs-io-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "phoslabs-io-openapi.yml: tagged paths POST /api/v1/audit -> Audit",
+    "phoslabs-io-openapi.yml: tagged paths POST /api/v1/diagnose -> Diagnose",
+    "phoslabs-io-openapi.yml: tagged paths POST /api/v1/fix-checkout -> Fix Checkout",
+    "phoslabs-io-openapi.yml: tagged paths POST /api/v1/copy -> Copy",
+    "phoslabs-io-openapi.yml: tagged paths POST /api/v1/pricing -> Pricing",
+    "phoslabs-io-openapi.yml: tagged paths POST /api/v1/detect-biases -> Detect Biases",
+    "phoslabs-io-openapi.yml: tagged paths GET /api/v1/tools -> Tools",
+    "phoslabs-io-openapi.yml: declared missing tag: Audit",
+    "phoslabs-io-openapi.yml: declared missing tag: Copy",
+    "phoslabs-io-openapi.yml: declared missing tag: Detect Biases",
+    "phoslabs-io-openapi.yml: declared missing tag: Diagnose",
+    "phoslabs-io-openapi.yml: declared missing tag: Fix Checkout",
+    "phoslabs-io-openapi.yml: declared missing tag: Pricing",
+    "phoslabs-io-openapi.yml: declared missing tag: Tools",
+    "tag 'Audit' spans 2 source specs (phoslabs-io-openapi.json, phoslabs-io-openapi.yml): per-path servers applied",
+    "tag 'Copy' spans 2 source specs (phoslabs-io-openapi.json, phoslabs-io-openapi.yml): per-path servers applied",
+    "tag 'Detect Biases' spans 2 source specs (phoslabs-io-openapi.json, phoslabs-io-openapi.yml): per-path servers applied",
+    "tag 'Diagnose' spans 2 source specs (phoslabs-io-openapi.json, phoslabs-io-openapi.yml): per-path servers applied",
+    "tag 'Fix Checkout' spans 2 source specs (phoslabs-io-openapi.json, phoslabs-io-openapi.yml): per-path servers applied",
+    "tag 'Pricing' spans 2 source specs (phoslabs-io-openapi.json, phoslabs-io-openapi.yml): per-path servers applied",
+    "tag 'Tools' spans 2 source specs (phoslabs-io-openapi.json, phoslabs-io-openapi.yml): per-path servers applied",
+    "apis.yml register: written (+7 apis, 8 total)"
+  ],
+  "skipped": []
+}

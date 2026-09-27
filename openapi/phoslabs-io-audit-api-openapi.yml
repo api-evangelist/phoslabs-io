@@ -1,0 +1,78 @@
+openapi: 3.2.0
+info:
+  title: Phoslabs Io Audit API
+  version: 1.0.0
+  contact:
+    url: https://phoslabs.io
+  description: 'Operations tagged Audit across 2 of this provider''s published API definitions: phoslabs-io-openapi.json, phoslabs-io-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://phoslabs.io
+  description: Production
+security:
+- BearerAuth: []
+tags:
+- name: Audit
+paths:
+  /api/v1/audit:
+    post:
+      summary: Full behavioral audit
+      description: 'Run a comprehensive behavioral science audit on a product or service. Free: this call costs 0 credits.'
+      operationId: audit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_description:
+                  type: string
+                  description: Description of the product or service to audit
+                url:
+                  type: string
+                  description: URL of the product (optional)
+                industry:
+                  type: string
+                goal:
+                  type: string
+              required:
+              - product_description
+      responses:
+        '200':
+          description: Audit results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '401':
+          description: Invalid API key
+        '402':
+          description: Insufficient credits
+      tags:
+      - Audit
+    servers:
+    - url: https://phoslabs.io
+      description: Production
+components:
+  schemas:
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        result:
+          type: object
+          description: Tool-specific result
+        credits_remaining:
+          type:
+          - integer
+          - 'null'
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: API key from /api/trial or purchased at /credits
+x-refined-from:
+- phoslabs-io-openapi.json
+- phoslabs-io-openapi.yml
