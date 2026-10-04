@@ -310,6 +310,9 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: CapabilityMap
+  url: capabilities/phoslabs-io-capability-edges.yml
+  name: Phos Labs Business Capability Map
 - type: AgentSkill
   url: skills/phoslabs-io-diagnose-and-fix-a-funnel.md
 - type: AgentSkill

@@ -1,0 +1,24 @@
+slug: phoslabs-io
+provider: Phos Labs
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 1
+edges:
+- tag: Pricing
+  spec_file: phoslabs-io-pricing-api-openapi.yml
+  capability_id: BC-440.10
+  capability_id_l1: BC-440
+  capability_name: Pricing Strategy Management
+  confidence: 0.72
+  evidence: POST /api/v1/pricing 'Pricing optimization'; vendor description 'optimize price framing'
+  reason: The operation optimises pricing and price framing, which realises Pricing Management and most
+    specifically pricing strategy/model setting rather than price-list maintenance or discount administration.
