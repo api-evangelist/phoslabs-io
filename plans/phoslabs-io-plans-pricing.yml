@@ -69,3 +69,38 @@ higher_limits:
 notes:
 - The credits page is the only price list; the README's USD prices ($5/$20/$100) are the same numbers in a different currency and are superseded by the EUR page and the EUR-denominated live listing.
 - No subscription, no enterprise tier, no quota table beyond credits.
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - free
+  - subscription
+  units: []
+  plans:
+  - name: Free starter credits
+    access: other
+    model: free
+    model_how: derived
+    units: []
+    periods: []
+  - name: Starter
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods:
+    - other
+  - name: Standard
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods:
+    - other
+  - name: Pro
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods:
+    - other
