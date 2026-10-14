@@ -1,5 +1,5 @@
 generated: '2026-10-12'
-method: none
+method: searched
 source:
 - https://zapier.com/apps/phoslabs-io/integrations
 - https://zapier.com/apps/phoslabs/integrations
@@ -13,10 +13,42 @@ checked:
 - https://monid.ai/tools/phoslabs-io
 - https://n8n.io/integrations/phoslabs-io/
 - https://n8n.io/integrations/phoslabs/
+- https://registry.modelcontextprotocol.io/v0/servers
 - https://zapier.com/apps/phos-labs/integrations
 - https://zapier.com/apps/phoslabs-io/integrations
 - https://zapier.com/apps/phoslabs/integrations
 summary: null
 marketplace_apps: []
-edges: []
+edges:
+- partner_name: MCP Registry
+  partner: mcp
+  partner_match: register
+  type: register
+  channel: standard-directory
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://registry.modelcontextprotocol.io/v0/servers?search=io.phoslabs
+  contract_reference:
+    register: registry.modelcontextprotocol.io
+    spec_file: null
+    role: mcp-server-listing
+    registered_name: io.phoslabs/commerce-intelligence
+    register_id: io.phoslabs/commerce-intelligence
+    detected_by: sweep-agent-tools.py
+    detected: '2026-10-14'
+  mcp_registry:
+    servers:
+    - io.phoslabs/commerce-intelligence
+    hosted_remote: 1
+    local_package: 0
+    transports:
+      streamable-http: 1
+    auth_declared: 0
+    catalog_declared: true
+    namespace_domains:
+    - phoslabs.io
+  matched_by:
+  - namespace-domain
+  detected_by: sweep-agent-tools.py
+  first_seen: '2026-10-14'
 templates: []
